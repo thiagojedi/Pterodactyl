@@ -2,6 +2,9 @@ package br.dev.thiagojedi.pterodactyl.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -48,7 +51,17 @@ fun StatusItem(status: Status) {
                     fontSize = 14.sp
                 )
             }
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(Icons.Default.MoreVert, contentDescription = "Context menu")
         }
         Text(text = status.content, softWrap = true, fontSize = 16.sp, lineHeight = 21.sp)
+
+        for (attachment in status.mediaAttachments.filter { it.type == Status.MediaAttachmentType.IMAGE }) {
+            AsyncImage(
+                model = attachment.previewUrl,
+                contentDescription = attachment.description,
+            )
+        }
+
     }
 }
