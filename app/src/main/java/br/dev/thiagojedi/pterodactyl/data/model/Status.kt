@@ -9,7 +9,7 @@ data class Status(
     @SerializedName("in_reply_to_id") val inReplyToId: String?,
     @SerializedName("in_reply_to_account_id") val inReplyToAccountId: String?,
     val sensitive: Boolean,
-    @SerializedName("spoiler_text") val spoilerText: String,
+    @SerializedName("spoiler_text") val spoilerText: String?,
     val visibility: String,
     val language: String,
     val uri: String,
