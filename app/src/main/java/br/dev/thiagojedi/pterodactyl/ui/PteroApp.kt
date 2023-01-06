@@ -30,7 +30,7 @@ fun PteroApp() {
         floatingActionButton = { TootFab() },
         bottomBar = { PteroNavBar() }) { padding ->
         Surface(Modifier.padding(padding)) {
-            TimeLineList(data = viewModel.timeline, modifier = Modifier.padding(padding))
+            TimeLineList(data = viewModel.timeline)
         }
     }
 }
