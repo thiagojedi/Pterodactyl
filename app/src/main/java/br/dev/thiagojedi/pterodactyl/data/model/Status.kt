@@ -17,6 +17,7 @@ data class Status(
     @SerializedName("replies_count") val repliesCount: Int,
     @SerializedName("reblogs_count") val reblogsCount: Int,
     @SerializedName("favourites_count") val favouritesCount: Int,
+    @SerializedName("edited_at") val editedAt: Date?,
     val favourited: Boolean,
     val reblogged: Boolean,
     val muted: Boolean,
@@ -24,8 +25,17 @@ data class Status(
     val content: String,
     val account: Account,
     val emojis: List<CustomEmoji>,
-    @SerializedName("media_attachments") val mediaAttachments: List<MediaAttachment>
+    @SerializedName("media_attachments") val mediaAttachments: List<MediaAttachment>,
+    val application: Application? = null,
+    val mentions: List<Mention>,
+    val pinned: Boolean? = false,
+    val tags: List<Tag>,
+    val card: Card? = null
 ) {
+    data class Application(
+        val name: String, val website: String?
+    )
+
     enum class MediaAttachmentType {
         @SerializedName("unknown")
         UNKNOWN,
@@ -56,4 +66,30 @@ data class Status(
         data class MetaSize(val width: Int, val height: Int)
         data class ImageMeta(val original: MetaSize?, val small: MetaSize?)
     }
+
+    data class Mention(
+        val id: String, val username: String, val url: String, val acct: String
+    )
+
+    data class Tag(
+        val name: String, val url: String
+    )
+
+    data class Card(
+        val url: String,
+        val title: String,
+        val description: String,
+        val type: String,
+        val author_name: String,
+        val author_url: String,
+        val provider_name: String,
+        val provider_url: String,
+        val html: String,
+        val width: Int,
+        val height: Int,
+        val image: String,
+        val embed_url: String,
+        val blurhash: String,
+    )
 }
+

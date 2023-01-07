@@ -13,12 +13,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.parseAsHtml
 import br.dev.thiagojedi.pterodactyl.data.model.Account
 import br.dev.thiagojedi.pterodactyl.data.model.Status
+import br.dev.thiagojedi.pterodactyl.data.model.mock.ReplyStatus
+import br.dev.thiagojedi.pterodactyl.data.model.mock.SimpleStatus
+import br.dev.thiagojedi.pterodactyl.data.model.mock.StatusWithLinkAndHashtags
+import br.dev.thiagojedi.pterodactyl.ui.theme.PterodactylTheme
 import br.dev.thiagojedi.pterodactyl.utils.emojify
 import coil.compose.AsyncImage
 
@@ -94,4 +99,28 @@ fun AccountName(
         overflow = TextOverflow.Ellipsis,
         fontSize = fontSize
     )
+}
+
+@Preview
+@Composable
+fun PreviewSimpleStatusItem() {
+    PterodactylTheme {
+        StatusItem(status = SimpleStatus)
+    }
+}
+
+@Preview
+@Composable
+fun PreviewReplyStatusItem() {
+    PterodactylTheme {
+        StatusItem(status = ReplyStatus)
+    }
+}
+
+@Preview
+@Composable
+fun PreviewStatusWithHastagsAndLink() {
+    PterodactylTheme {
+        StatusItem(status = StatusWithLinkAndHashtags)
+    }
 }
