@@ -1,6 +1,7 @@
 package br.dev.thiagojedi.pterodactyl.ui.components
 
-import android.util.Log
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -105,7 +106,14 @@ fun StatusItem(status: Status) {
                                 "Hashtag ${stringAnnotation.item}",
                                 Toast.LENGTH_LONG
                             ).show()
-                            else -> Log.d("External URL", stringAnnotation.item)
+                            else -> {
+                                context.startActivity(
+                                    Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse(stringAnnotation.item)
+                                    )
+                                )
+                            }
                         }
                     }
             }
