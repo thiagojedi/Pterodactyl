@@ -1,12 +1,13 @@
 package br.dev.thiagojedi.pterodactyl.ui.components
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,7 +16,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -33,6 +33,7 @@ import coil.compose.AsyncImage
 
 @Composable
 fun StatusItem(status: Status) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -74,13 +75,13 @@ fun StatusItem(status: Status) {
                 status.mentions,
                 status.tags,
                 linkStyle = SpanStyle(
-                    color = LocalTextStyle.current.color,
-                    textDecoration = TextDecoration.Underline
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
                 )
             ),
             status.emojis,
             16.sp,
-            LocalContext.current
+            context
         )
         CustomClickableText(
             text = content,
@@ -89,9 +90,23 @@ fun StatusItem(status: Status) {
             fontSize = 16.sp,
             lineHeight = 21.sp,
             onClick = {
-                content.getStringAnnotations("URL", it, it).firstOrNull()
+                content
+                    .getStringAnnotations(it, it)
+                    .firstOrNull()
                     ?.let { stringAnnotation ->
-                        Log.d("StatusLink", stringAnnotation.item)
+                        when (stringAnnotation.tag) {
+                            "MENTION" -> Toast.makeText(
+                                context,
+                                "Mention ${stringAnnotation.item}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            "HASHTAG" -> Toast.makeText(
+                                context,
+                                "Hashtag ${stringAnnotation.item}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            else -> Log.d("External URL", stringAnnotation.item)
+                        }
                     }
             }
         )
