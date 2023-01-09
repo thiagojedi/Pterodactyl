@@ -7,5 +7,5 @@ data class CustomEmoji(
     val url: String,
     @SerializedName("static_url") val staticUrl: String,
     @SerializedName("visible_in_picker") val visibleInPicker: Boolean,
-    val category: String,
+    val category: String? = null,
 )

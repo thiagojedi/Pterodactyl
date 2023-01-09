@@ -27,6 +27,6 @@ data class Account(
     data class Field(
         val name: String,
         val value: String,
-        @SerializedName("verified_at") val verifiedAt: Date,
+        @SerializedName("verified_at") val verifiedAt: Date?,
     )
 }
