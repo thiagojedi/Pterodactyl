@@ -4,6 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitHelper {
+    // TODO: This should be dynamic, according to login
     val baseUrl = "https://cuscuz.in"
 
     fun getInstance(): Retrofit {
