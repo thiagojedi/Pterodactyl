@@ -20,7 +20,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.dev.thiagojedi.pterodactyl.R
@@ -47,18 +46,14 @@ fun StatusItem(status: Status) {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             AsyncImage(
-                model = status.account.avatar,
+                model = status.account.avatarStatic,
                 contentDescription = "Avatar",
                 modifier = Modifier
                     .clip(RoundedCornerShape(12.dp))
                     .size(44.dp)
             )
             Column {
-                AccountName(
-                    account = status.account,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
+                AccountName(account = status.account)
                 Text(
                     text = "@${status.account.acct}",
                     fontWeight = FontWeight.Light,
@@ -119,20 +114,26 @@ fun StatusActions(status: Status) {
 
 @Composable
 fun StatusContent(status: Status) {
+    val highlightStyle =
+        SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
+    val textStyle = MaterialTheme.typography.bodyMedium
+    val paragraphStyle = textStyle.toParagraphStyle()
+    val linkStyle = textStyle.toSpanStyle().plus(highlightStyle)
+    val mastodonHtml = parseMastodonHtml(
+        status.content,
+        status.mentions,
+        status.tags,
+        paragraphStyle = paragraphStyle,
+        linkStyle = linkStyle
+    )
     val context = LocalContext.current
 
-    val (content, inlineContent) = emojify(
-        parseMastodonHtml(
-            status.content, status.mentions, status.tags, linkStyle = SpanStyle(
-                color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold
-            )
-        ), status.emojis, 16.sp, context
-    )
+    val (content, inlineContent) = emojify(mastodonHtml, status.emojis, 16.sp, context)
+
     CustomClickableText(text = content,
         inlineContent = inlineContent,
         softWrap = true,
-        fontSize = 16.sp,
-        lineHeight = 21.sp,
+        style = textStyle,
         onClick = {
             content.getStringAnnotations(it, it).firstOrNull()?.let { stringAnnotation ->
                 when (stringAnnotation.tag) {
@@ -155,20 +156,20 @@ fun StatusContent(status: Status) {
 }
 
 @Composable
-fun AccountName(
-    account: Account, fontWeight: FontWeight? = null, fontSize: TextUnit = TextUnit.Unspecified
-) {
+fun AccountName(account: Account) {
+    val headlineMedium = MaterialTheme.typography.headlineMedium
+
     val (annotatedString, inlineContent) = emojify(
-        account.display_name, account.emojis, fontSize, LocalContext.current
+        account.display_name, account.emojis, headlineMedium.fontSize, LocalContext.current
     )
 
     Text(
         text = annotatedString,
         inlineContent = inlineContent,
-        fontWeight = fontWeight,
+        style = headlineMedium,
+        fontWeight = FontWeight.Bold,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        fontSize = fontSize
     )
 }
 

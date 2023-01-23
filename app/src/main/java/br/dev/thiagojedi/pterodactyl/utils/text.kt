@@ -1,7 +1,6 @@
 package br.dev.thiagojedi.pterodactyl.utils
 
 import androidx.compose.ui.text.*
-import androidx.compose.ui.unit.sp
 import br.dev.thiagojedi.pterodactyl.data.model.Status
 import java.util.regex.Pattern
 
@@ -28,7 +27,8 @@ fun parseMastodonHtml(
     text: String,
     mentions: List<Status.Mention> = emptyList(),
     tags: List<Status.Tag> = emptyList(),
-    linkStyle: SpanStyle
+    paragraphStyle: ParagraphStyle,
+    linkStyle: SpanStyle,
 ): AnnotatedString {
     val cleanText = text
         .replace(breakLinePattern, "\n")
@@ -40,9 +40,7 @@ fun parseMastodonHtml(
         while (paragraphMatch.find()) {
             val substring = paragraphMatch.group(1).orEmpty()
 
-            withStyle(
-                ParagraphStyle(lineHeight = 21.sp)
-            ) {
+            withStyle(paragraphStyle) {
                 appendLine(buildAnnotatedString {
                     val links = aTagPattern.findAll(substring)
                     var position = 0
@@ -51,13 +49,14 @@ fun parseMastodonHtml(
                         append(substring.slice(position until link.range.first))
 
                         withStyle(linkStyle) {
-                            pushStringAnnotation("URL", link.groups.get(1)?.value.orEmpty())
-                            val s = link.groups.get(3)?.value
-                            if (link.groups.get(2)?.value.isNullOrEmpty()) {
-                                append(s)
-                            } else {
-                                append("$s...")
-                            }
+                            pushStringAnnotation("URL", link.groups[1]?.value.orEmpty())
+                            val linkText = link.groups[3]?.value
+                            val isFullText = link.groups[2]?.value.isNullOrEmpty()
+
+                            if (isFullText)
+                                append(linkText)
+                            else // with ellipsis
+                                append("$linkText...")
                         }
 
                         position = link.range.last + 1
@@ -93,8 +92,10 @@ fun parseMastodonHtml(
 
         tags.forEach { tag ->
             //FixMe: Name doesn't have accents. Doesn't match tags like "#eleição"
-            val match = Pattern.compile("#${tag.name}", Pattern.LITERAL or Pattern.CASE_INSENSITIVE)
+            val match = Pattern
+                .compile("#${tag.name}", Pattern.LITERAL or Pattern.CASE_INSENSITIVE)
                 .matcher(paragraphs)
+
             while (match.find()) {
                 addStyle(linkStyle, match.start(), match.end())
                 addStringAnnotation(
