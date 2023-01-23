@@ -29,8 +29,7 @@ import br.dev.thiagojedi.pterodactyl.data.model.mock.ReplyStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.SimpleStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.StatusWithLinkAndHashtags
 import br.dev.thiagojedi.pterodactyl.ui.theme.PterodactylTheme
-import br.dev.thiagojedi.pterodactyl.utils.emojify
-import br.dev.thiagojedi.pterodactyl.utils.parseMastodonHtml
+import br.dev.thiagojedi.pterodactyl.utils.*
 import coil.compose.AsyncImage
 
 @Composable
@@ -135,18 +134,23 @@ fun StatusContent(status: Status) {
         softWrap = true,
         style = textStyle,
         onClick = {
-            content.getStringAnnotations(it, it).firstOrNull()?.let { stringAnnotation ->
-                when (stringAnnotation.tag) {
-                    "MENTION" -> Toast.makeText(
-                        context, "Mention ${stringAnnotation.item}", Toast.LENGTH_LONG
+            content.getStringAnnotations(it, it).firstOrNull()?.let { annotation ->
+                when (annotation.tag) {
+                    MentionTag -> Toast.makeText(
+                        context,
+                        "Mention ${annotation.item}",
+                        Toast.LENGTH_LONG
                     ).show()
-                    "HASHTAG" -> Toast.makeText(
-                        context, "Hashtag ${stringAnnotation.item}", Toast.LENGTH_LONG
+                    HashtagTag -> Toast.makeText(
+                        context,
+                        "Hashtag ${annotation.item}",
+                        Toast.LENGTH_LONG
                     ).show()
-                    else -> {
+                    URLTag -> {
                         context.startActivity(
                             Intent(
-                                Intent.ACTION_VIEW, Uri.parse(stringAnnotation.item)
+                                Intent.ACTION_VIEW,
+                                Uri.parse(annotation.item)
                             )
                         )
                     }

@@ -23,6 +23,10 @@ private val aTagPattern by lazy {
     Regex("<a href=\"([^\"]+)\"[^>]*><span class=\"(ellipsis)?\">([^<]+?)</span></a>")
 }
 
+const val URLTag = "URL"
+const val MentionTag = "MENTION"
+const val HashtagTag = "TAG"
+
 fun parseMastodonHtml(
     text: String,
     mentions: List<Status.Mention> = emptyList(),
@@ -49,7 +53,7 @@ fun parseMastodonHtml(
                         append(substring.slice(position until link.range.first))
 
                         withStyle(linkStyle) {
-                            pushStringAnnotation("URL", link.groups[1]?.value.orEmpty())
+                            pushStringAnnotation(URLTag, link.groups[1]?.value.orEmpty())
                             val linkText = link.groups[3]?.value
                             val isFullText = link.groups[2]?.value.isNullOrEmpty()
 
@@ -82,7 +86,7 @@ fun parseMastodonHtml(
             while (match.find()) {
                 addStyle(linkStyle, match.start(), match.end())
                 addStringAnnotation(
-                    tag = "MENTION",
+                    tag = MentionTag,
                     annotation = mention.url,
                     start = match.start(),
                     end = match.end()
@@ -99,7 +103,7 @@ fun parseMastodonHtml(
             while (match.find()) {
                 addStyle(linkStyle, match.start(), match.end())
                 addStringAnnotation(
-                    tag = "HASHTAG",
+                    tag = HashtagTag,
                     annotation = tag.url,
                     start = match.start(),
                     end = match.end()
