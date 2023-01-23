@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.dev.thiagojedi.pterodactyl.data.model.Status
 import br.dev.thiagojedi.pterodactyl.data.services.RetrofitHelper
-import br.dev.thiagojedi.pterodactyl.data.services.StatusService
+import br.dev.thiagojedi.pterodactyl.data.services.TimeLineService
 import br.dev.thiagojedi.pterodactyl.ui.components.PteroNavBar
 import br.dev.thiagojedi.pterodactyl.ui.components.PteroTopBar
 import br.dev.thiagojedi.pterodactyl.ui.components.TimeLineList
@@ -40,7 +40,7 @@ class TimeLineViewModel : ViewModel() {
 
     suspend fun getTimeline() {
         viewModelScope.launch {
-            val api = RetrofitHelper.getInstance().create(StatusService::class.java)
+            val api = RetrofitHelper.getInstance().create(TimeLineService::class.java)
             val result = api.getPublicTimeline()
 
             result.body()?.let { timeline.addAll(it) }
