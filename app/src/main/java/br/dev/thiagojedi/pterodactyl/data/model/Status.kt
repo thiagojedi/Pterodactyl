@@ -91,5 +91,31 @@ data class Status(
         val embed_url: String,
         val blurhash: String,
     )
+
+    enum class Visibility {
+        /**
+         * Visible to everyone, shown in public timelines.
+         * */
+        @SerializedName("public")
+        PUBLIC,
+
+        /**
+         * Visible to public, but not included in public timelines.
+         * */
+        @SerializedName("unlisted")
+        UNLISTED,
+
+        /**
+         * Visible to followers only, and to any mentioned users.
+         * */
+        @SerializedName("private")
+        PRIVATE,
+
+        /**
+         * Visible only to mentioned users.
+         * */
+        @SerializedName("direct")
+        DIRECT,
+    }
 }
 
