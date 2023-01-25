@@ -51,22 +51,14 @@ fun StatusItem(status: Status) {
                     .clip(RoundedCornerShape(12.dp))
                     .size(44.dp)
             )
-            Column {
-                AccountName(account = status.account)
-                Text(
-                    text = "@${status.account.acct}",
-                    fontWeight = FontWeight.Light,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    fontSize = 14.sp
-                )
-            }
+            AccountInfo(account = status.account)
             Spacer(modifier = Modifier.weight(1f))
             Icon(Icons.Default.MoreVert, contentDescription = "Context menu")
         }
 
         StatusContent(status = status)
-        StatusActions(status = status)
+        // TODO: StatusMedia(status = status)
+        //StatusActions(status = status)
     }
 }
 
@@ -115,7 +107,7 @@ fun StatusActions(status: Status) {
 fun StatusContent(status: Status) {
     val highlightStyle =
         SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
-    val textStyle = MaterialTheme.typography.bodyMedium
+    val textStyle = MaterialTheme.typography.bodyLarge
     val paragraphStyle = textStyle.toParagraphStyle()
     val linkStyle = textStyle.toSpanStyle().plus(highlightStyle)
     val mastodonHtml = parseMastodonHtml(
@@ -160,21 +152,30 @@ fun StatusContent(status: Status) {
 }
 
 @Composable
-fun AccountName(account: Account) {
-    val headlineMedium = MaterialTheme.typography.headlineMedium
+fun AccountInfo(account: Account) {
+    val textStyle = MaterialTheme.typography.titleMedium
 
     val (annotatedString, inlineContent) = emojify(
-        account.display_name, account.emojis, headlineMedium.fontSize, LocalContext.current
+        account.display_name, account.emojis, textStyle.fontSize, LocalContext.current
     )
 
-    Text(
-        text = annotatedString,
-        inlineContent = inlineContent,
-        style = headlineMedium,
-        fontWeight = FontWeight.Bold,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-    )
+    Column {
+        Text(
+            text = annotatedString,
+            inlineContent = inlineContent,
+            style = textStyle,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = "@${account.acct}",
+            style = textStyle,
+            fontWeight = FontWeight.Light,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
 }
 
 @Preview
