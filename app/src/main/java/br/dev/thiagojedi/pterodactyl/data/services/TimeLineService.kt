@@ -14,4 +14,7 @@ interface TimeLineService {
 
     @GET("/api/v1/timelines/list/{list_id}")
     suspend fun getListTimeline(@Path("list_id") listId: String): Response<List<Status>>
+
+    @GET("/api/v1/timelines/home")
+    suspend fun getHomeTimeline(): Response<List<Status>>
 }
