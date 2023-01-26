@@ -20,7 +20,7 @@ private val paragraphPattern by lazy {
     Pattern.compile("<p>(.+?)</p>", Pattern.DOTALL or Pattern.CASE_INSENSITIVE)
 }
 private val aTagPattern by lazy {
-    Regex("<a href=\"([^\"]+)\"[^>]*><span class=\"(ellipsis)?\">([^<]+?)</span></a>")
+    Regex("<a href=\"([^\"]+)\"[^>]*>(<span class=\"(ellipsis)?\">)?([^<]+?)(</span>)?</a>")
 }
 
 const val URLTag = "URL"
@@ -54,8 +54,8 @@ fun parseMastodonHtml(
 
                         withStyle(linkStyle) {
                             pushStringAnnotation(URLTag, link.groups[1]?.value.orEmpty())
-                            val linkText = link.groups[3]?.value
-                            val isFullText = link.groups[2]?.value.isNullOrEmpty()
+                            val linkText = link.groups[4]?.value
+                            val isFullText = link.groups[3]?.value.isNullOrEmpty()
 
                             if (isFullText)
                                 append(linkText)
