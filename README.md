@@ -1,8 +1,7 @@
 # Pterodactyl
 
 > **Warning:** **THIS IS A WORK IN PROGRESS.** It does not have all the
-> features. Heck, it doesn't have user data security yet. Use it at your own
-> risk.
+> features. Use it at your own risk.
 
 Pterodactyl is a client app for Mastodon[^mastodonapi] on android. Heavly
 inspired by [Mastodon-android][masto01], and its forks [Megalodon][megs] and
@@ -30,12 +29,13 @@ their codebase, I'm creating my own.
 - [ ] Timelines
   - [ ] Federated
   - [ ] Local
-  - [ ] Home
+  - [-] Home
 - [ ] Statuses
   - [ ] Interaction (fav, boost)
   - [ ] Context (replies, etc)
   - [ ] Media
-- [ ] Login
+- [x] Login
+- [ ] Landing Page
 - [ ] User profile
   - [ ] User Statuses
   - [ ] User actions (follow, silence, etc)
@@ -55,7 +55,7 @@ their codebase, I'm creating my own.
 - [ ] Notifications
 - [ ] Filters
 
-### Planned
+### After release
 
 - [ ] Push Notifications
 - [ ] Tablet layout
@@ -64,7 +64,6 @@ their codebase, I'm creating my own.
 ## Will you publish it to the Play Store, F-Droid or other store?
 
 Let's wait until the app is ready, shall we?
-
 
 > "Alpha, Rita's escaped! Recruit a team of teenagers with attitude!"
 >
