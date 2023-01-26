@@ -30,7 +30,8 @@ data class Status(
     val mentions: List<Mention>,
     val pinned: Boolean? = false,
     val tags: List<Tag>,
-    val card: Card? = null
+    val card: Card? = null,
+    val reblog: Status? = null
 ) {
     data class Application(
         val name: String, val website: String?

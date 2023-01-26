@@ -34,31 +34,34 @@ import coil.compose.AsyncImage
 
 @Composable
 fun StatusItem(status: Status) {
+    val actualStatus = status.reblog ?: status
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        RebloggedTag(status = status)
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             AsyncImage(
-                model = status.account.avatarStatic,
+                model = actualStatus.account.avatarStatic,
                 contentDescription = "Avatar",
                 modifier = Modifier
                     .clip(RoundedCornerShape(12.dp))
                     .size(44.dp)
             )
-            AccountInfo(account = status.account)
+            AccountInfo(account = actualStatus.account)
             Spacer(modifier = Modifier.weight(1f))
             Icon(Icons.Default.MoreVert, contentDescription = "Context menu")
         }
 
-        StatusContent(status = status)
-        // TODO: StatusMedia(status = status)
-        //StatusActions(status = status)
+        StatusContent(status = actualStatus)
+        // TODO: StatusMedia(status = actualStatus)
+        //StatusActions(status = actualStatus)
     }
 }
 
@@ -149,6 +152,22 @@ fun StatusContent(status: Status) {
                 }
             }
         })
+}
+
+@Composable
+fun RebloggedTag(status: Status) {
+    if (status.reblog != null) {
+        val textStyle = MaterialTheme.typography.labelMedium
+        val account = status.account
+        val (annotatedString, inlineContent) = emojify(
+            "Reblogged by ${account.display_name}",
+            account.emojis,
+            textStyle.fontSize,
+            LocalContext.current
+        )
+
+        Text(text = annotatedString, inlineContent = inlineContent, style = textStyle)
+    }
 }
 
 @Composable
