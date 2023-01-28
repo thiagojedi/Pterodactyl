@@ -39,29 +39,43 @@ fun StatusItem(status: Status) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         RebloggedTag(status = status)
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            AsyncImage(
-                model = actualStatus.account.avatarStatic,
-                contentDescription = "Avatar",
-                modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .size(44.dp)
-            )
-            AccountInfo(account = actualStatus.account)
-            Spacer(modifier = Modifier.weight(1f))
-            Icon(Icons.Default.MoreVert, contentDescription = "Context menu")
+        Card {
+            Column(
+                modifier = Modifier.padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    AsyncImage(
+                        model = actualStatus.account.avatarStatic,
+                        contentDescription = "Avatar",
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .size(44.dp)
+                    )
+                    AccountInfo(account = actualStatus.account)
+                    Spacer(
+                        modifier = Modifier
+                            .weight(1f)
+                            .defaultMinSize(minWidth = 2.dp)
+                    )
+                    Text(
+                        text = actualStatus.createdAt.fromNow(),
+                        style = MaterialTheme.typography.labelSmall,
+                        maxLines = 1
+                    )
+                }
+                StatusContent(status = actualStatus)
+                // TODO: StatusMedia(status = actualStatus)
+                StatusActions(status = actualStatus)
+            }
         }
-
-        StatusContent(status = actualStatus)
-        // TODO: StatusMedia(status = actualStatus)
-        //StatusActions(status = actualStatus)
     }
 }
 
@@ -73,35 +87,45 @@ fun StatusActions(status: Status) {
     val (bookmarked, setBookmarked) = remember {
         mutableStateOf(status.bookmarked)
     }
+    val tint = MaterialTheme.colorScheme.onSurface
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(24.dp)
     ) {
         IconButton(onClick = { /*TODO*/ }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_fluent_arrow_reply_24_regular),
                 contentDescription = "Reply",
+                tint = tint
             )
         }
         IconToggleButton(checked = favorited, onCheckedChange = setFavorited) {
             Icon(
                 painter = painterResource(id = if (favorited) R.drawable.ic_fluent_star_24_filled else R.drawable.ic_fluent_star_24_regular),
-                contentDescription = "Favorite"
+                contentDescription = "Favorite",
+                tint = tint
             )
         }
         IconToggleButton(checked = bookmarked, onCheckedChange = setBookmarked) {
             Icon(
                 painter = painterResource(id = if (bookmarked) R.drawable.ic_fluent_bookmark_24_filled else R.drawable.ic_fluent_bookmark_24_regular),
-                contentDescription = "Boost"
+                contentDescription = "Boost",
+                tint = tint
             )
         }
         IconButton(onClick = { /*TODO*/ }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_fluent_share_24_regular),
-                contentDescription = "Share"
+                contentDescription = "Share",
+                tint = tint
             )
+        }
+        IconButton(onClick = { /*TODO*/ }) {
+            Icon(Icons.Default.MoreVert, contentDescription = "More actions")
         }
     }
 }
@@ -110,7 +134,7 @@ fun StatusActions(status: Status) {
 fun StatusContent(status: Status) {
     val highlightStyle =
         SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
-    val textStyle = MaterialTheme.typography.bodyLarge
+    val textStyle = MaterialTheme.typography.bodyMedium
     val paragraphStyle = textStyle.toParagraphStyle()
     val linkStyle = textStyle.toSpanStyle().plus(highlightStyle)
     val mastodonHtml = parseMastodonHtml(
@@ -124,7 +148,9 @@ fun StatusContent(status: Status) {
 
     val (content, inlineContent) = emojify(mastodonHtml, status.emojis, 16.sp, context)
 
-    CustomClickableText(text = content,
+    CustomClickableText(
+        text = content,
+        color = MaterialTheme.colorScheme.onSurface,
         inlineContent = inlineContent,
         softWrap = true,
         style = textStyle,

@@ -1,7 +1,9 @@
 package br.dev.thiagojedi.pterodactyl.utils
 
+import android.icu.text.RelativeDateTimeFormatter
 import androidx.compose.ui.text.*
 import br.dev.thiagojedi.pterodactyl.data.model.Status
+import java.util.*
 import java.util.regex.Pattern
 
 private val breakLinePattern by lazy {
@@ -108,5 +110,43 @@ fun parseMastodonHtml(
                 )
             }
         }
+    }
+}
+
+fun Date.fromNow(): String {
+    val formatter = RelativeDateTimeFormatter.getInstance()
+    val now = Date()
+    val diff = now.time - this.time
+
+    if (diff < 1000) {
+        return formatter.format(
+            RelativeDateTimeFormatter.Direction.PLAIN,
+            RelativeDateTimeFormatter.AbsoluteUnit.NOW
+        )
+    }
+    if (diff < 60 * 1000) {
+        return formatter.format(
+            (diff / 1000).toDouble(),
+            RelativeDateTimeFormatter.Direction.LAST,
+            RelativeDateTimeFormatter.RelativeUnit.SECONDS
+        )
+    } else if (diff < 60 * 60 * 1000) {
+        return formatter.format(
+            (diff / (60 * 1000)).toDouble(),
+            RelativeDateTimeFormatter.Direction.LAST,
+            RelativeDateTimeFormatter.RelativeUnit.MINUTES
+        )
+    } else if (diff < 24 * 60 * 60 * 1000) {
+        return formatter.format(
+            (diff / (60 * 60 * 1000)).toDouble(),
+            RelativeDateTimeFormatter.Direction.LAST,
+            RelativeDateTimeFormatter.RelativeUnit.HOURS
+        )
+    } else {
+        return formatter.format(
+            (diff / (24 * 60 * 60 * 1000)).toDouble(),
+            RelativeDateTimeFormatter.Direction.LAST,
+            RelativeDateTimeFormatter.RelativeUnit.DAYS
+        )
     }
 }
