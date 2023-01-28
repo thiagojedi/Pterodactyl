@@ -6,7 +6,8 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Reply
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -15,14 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.dev.thiagojedi.pterodactyl.R
+import androidx.core.content.ContextCompat.startActivity
 import br.dev.thiagojedi.pterodactyl.data.model.Account
 import br.dev.thiagojedi.pterodactyl.data.model.Status
 import br.dev.thiagojedi.pterodactyl.data.model.mock.ReplyStatus
@@ -91,51 +91,57 @@ fun StatusActions(status: Status) {
         mutableStateOf(status.reblogged)
     }
     val tint = MaterialTheme.colorScheme.onSurface
-
+    val selectedTint = MaterialTheme.colorScheme.primary
+    val context = LocalContext.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(24.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { }, enabled = false) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_fluent_arrow_reply_24_regular),
+                Icons.Filled.Reply,
                 contentDescription = "Reply",
-                tint = tint
             )
         }
         IconToggleButton(checked = boosted, onCheckedChange = setBoosted) {
             Icon(
-                painter = painterResource(id = if (boosted) R.drawable.ic_fluent_arrow_repeat_all_24_very_filled else R.drawable.ic_fluent_arrow_repeat_all_24_regular),
+                if (boosted) Icons.Rounded.RepeatOn else Icons.Rounded.Repeat,
                 contentDescription = "Boost",
-                tint = tint
+                tint = if (boosted) selectedTint else tint
             )
         }
         IconToggleButton(checked = favorited, onCheckedChange = setFavorited) {
             Icon(
-                painter = painterResource(id = if (favorited) R.drawable.ic_fluent_star_24_filled else R.drawable.ic_fluent_star_24_regular),
+                if (favorited) Icons.Rounded.Star else Icons.Rounded.StarBorder,
                 contentDescription = "Favorite",
-                tint = tint
+                tint = if (favorited) selectedTint else tint
             )
         }
         IconToggleButton(checked = bookmarked, onCheckedChange = setBookmarked) {
             Icon(
-                painter = painterResource(id = if (bookmarked) R.drawable.ic_fluent_bookmark_24_filled else R.drawable.ic_fluent_bookmark_24_regular),
+                if (bookmarked) Icons.Rounded.Bookmark else Icons.Rounded.BookmarkBorder,
                 contentDescription = "Boost",
-                tint = tint
+                tint = if (bookmarked) selectedTint else tint
             )
         }
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = {
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, status.url)
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(context, shareIntent, null)
+        }) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_fluent_share_24_regular),
+                Icons.Rounded.Share,
                 contentDescription = "Share",
                 tint = tint
             )
         }
-        IconButton(onClick = { /*TODO*/ }) {
-            Icon(Icons.Default.MoreVert, contentDescription = "More actions")
+        IconButton(onClick = { }, enabled = false) {
+            Icon(Icons.Rounded.MoreHoriz, contentDescription = "More actions")
         }
     }
 }
