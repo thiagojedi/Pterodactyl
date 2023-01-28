@@ -17,7 +17,7 @@ fun PteroApp() {
         floatingActionButton = { TootFab() },
         bottomBar = { PteroNavBar() }) { padding ->
         Surface(Modifier.padding(padding)) {
-            TimeLineView()
+            HomeTimeLineView()
         }
     }
 }

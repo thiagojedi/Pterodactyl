@@ -1,9 +1,9 @@
 package br.dev.thiagojedi.pterodactyl.ui.viewModel
 
-import android.content.Context
+import android.app.Application
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import br.dev.thiagojedi.pterodactyl.data.model.Status
 import br.dev.thiagojedi.pterodactyl.data.services.RetrofitHelper
@@ -12,24 +12,36 @@ import br.dev.thiagojedi.pterodactyl.data.store.AppStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class TimeLineViewModel(context: Context) : ViewModel() {
+class TimeLineViewModel(context: Application) : AndroidViewModel(context) {
     private val store: AppStore = AppStore(context)
-    val timeline = mutableStateListOf<Status>()
+    val homeTimeLine = mutableStateListOf<Status>()
+    val localTimeLine = mutableStateListOf<Status>()
+    val federatedTimeLine = mutableStateListOf<Status>()
 
-    suspend fun getTimeline() {
+    suspend fun getHomeTimeline() = getTimeline("home", homeTimeLine)
+    suspend fun getFederatedTimeline() = getTimeline("federated", federatedTimeLine)
+    suspend fun getLocalTimeline() = getTimeline("local", localTimeLine)
+
+    private suspend fun getTimeline(type: String, list: MutableList<Status>) {
+        val baseUrl = store.getBaseUrl.first()!!
+        val userToken = store.getUserToken.first()!!
+        val api =
+            RetrofitHelper.getInstance(baseUrl, userToken)
+                .create(TimeLineService::class.java)
+
         viewModelScope.launch {
             try {
-                val baseUrl = store.getBaseUrl.first()!!
-                val userToken = store.getUserToken.first()!!
-                val api =
-                    RetrofitHelper.getInstance(baseUrl, userToken).create(TimeLineService::class.java)
-                val result = api.getHomeTimeline()
+                val result = when (type) {
+                    "home" -> api.getHomeTimeline()
+                    "local" -> api.getPublicTimeline(local = true)
+                    else -> api.getPublicTimeline()
+                }
 
                 result.body()?.let {
-                    timeline.addAll(it)
+                    list.addAll(elements = it, index = 0)
                 }
             } catch (ex: Exception) {
-                Log.e(Companion.TAG, "getTimeline: ${ex.message}", )
+                Log.e(TAG, "getTimeline: $type - ${ex.message}")
             }
         }
     }
