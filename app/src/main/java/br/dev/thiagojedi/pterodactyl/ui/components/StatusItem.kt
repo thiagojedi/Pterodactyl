@@ -87,6 +87,9 @@ fun StatusActions(status: Status) {
     val (bookmarked, setBookmarked) = remember {
         mutableStateOf(status.bookmarked)
     }
+    val (boosted, setBoosted) = remember {
+        mutableStateOf(status.reblogged)
+    }
     val tint = MaterialTheme.colorScheme.onSurface
 
     Row(
@@ -100,6 +103,13 @@ fun StatusActions(status: Status) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_fluent_arrow_reply_24_regular),
                 contentDescription = "Reply",
+                tint = tint
+            )
+        }
+        IconToggleButton(checked = boosted, onCheckedChange = setBoosted) {
+            Icon(
+                painter = painterResource(id = if (boosted) R.drawable.ic_fluent_arrow_repeat_all_24_very_filled else R.drawable.ic_fluent_arrow_repeat_all_24_regular),
+                contentDescription = "Boost",
                 tint = tint
             )
         }
