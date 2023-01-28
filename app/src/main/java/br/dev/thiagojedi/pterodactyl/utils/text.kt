@@ -93,18 +93,16 @@ fun parseMastodonHtml(
                 )
             }
         }
+        val match = Pattern
+            .compile("(?:^|[^/)\\w])#([\\p{L}\\p{Digit}_]+)", Pattern.CASE_INSENSITIVE)
+            .matcher(paragraphs)
 
-        tags.forEach { tag ->
-            //FixMe: Name doesn't have accents. Doesn't match tags like "#eleição"
-            val match = Pattern
-                .compile("#${tag.name}", Pattern.LITERAL or Pattern.CASE_INSENSITIVE)
-                .matcher(paragraphs)
-
-            while (match.find()) {
-                addStyle(linkStyle, match.start(), match.end())
+        while (match.find()) {
+            addStyle(linkStyle, match.start(), match.end())
+            match.group(1)?.let {
                 addStringAnnotation(
                     tag = HashtagTag,
-                    annotation = tag.url,
+                    annotation = it,
                     start = match.start(),
                     end = match.end()
                 )
