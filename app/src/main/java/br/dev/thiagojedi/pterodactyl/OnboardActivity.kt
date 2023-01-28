@@ -26,7 +26,6 @@ import net.openid.appauth.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 class OnboardActivity : ComponentActivity() {
-    private val TAG = "OnboardActivity"
     private lateinit var service: AuthorizationService
     private lateinit var viewModel: AppViewModel
 
@@ -145,4 +144,8 @@ class OnboardActivity : ComponentActivity() {
                 }
             }
         }
+
+    companion object {
+        private const val TAG = "OnboardActivity"
+    }
 }
