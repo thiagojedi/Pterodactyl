@@ -2,13 +2,11 @@ package br.dev.thiagojedi.pterodactyl.utils
 
 import android.icu.text.RelativeDateTimeFormatter
 import androidx.compose.ui.text.*
+import androidx.core.text.parseAsHtml
 import br.dev.thiagojedi.pterodactyl.data.model.Status
 import java.util.*
 import java.util.regex.Pattern
 
-private val breakLinePattern by lazy {
-    Regex("<br\\s*/?>")
-}
 private val mentionPattern by lazy {
     Regex("<span class=\"h-card\"><a[^>]+?>@<span>([^<]+?)</span></a></span>")
 }
@@ -24,7 +22,6 @@ private val paragraphPattern by lazy {
 private val aTagPattern by lazy {
     Regex("<a href=\"([^\"]+)\"[^>]*>(<span class=\"(ellipsis)?\">)?([^<]+?)(</span>)?</a>")
 }
-
 const val URLTag = "URL"
 const val MentionTag = "MENTION"
 const val HashtagTag = "TAG"
@@ -32,12 +29,10 @@ const val HashtagTag = "TAG"
 fun parseMastodonHtml(
     text: String,
     mentions: List<Status.Mention> = emptyList(),
-    tags: List<Status.Tag> = emptyList(),
-    paragraphStyle: ParagraphStyle,
-    linkStyle: SpanStyle,
+    paragraphStyle: ParagraphStyle = ParagraphStyle(),
+    linkStyle: SpanStyle = SpanStyle(),
 ): AnnotatedString {
     val cleanText = text
-        .replace(breakLinePattern, "\n")
         .replace(invisibleSpanPattern, "")
         .replace(mentionPattern) { match -> "@${match.groups[1]?.value}" }
         .replace(hashtagPattern) { match -> "#${match.groups[1]?.value}" }
@@ -52,27 +47,28 @@ fun parseMastodonHtml(
                     var position = 0
 
                     for (link in links) {
-                        append(substring.slice(position until link.range.first))
+                        val linkUrl = link.groups[1]?.value.orEmpty()
+                        val linkText = link.groups[4]?.value
+                        val isFullText = link.groups[3]?.value.isNullOrEmpty()
+                        val stringBefore =
+                            substring.slice(position until link.range.first).parseAsHtml()
+                        append(stringBefore)
 
+                        pushStringAnnotation(URLTag, linkUrl)
                         withStyle(linkStyle) {
-                            pushStringAnnotation(URLTag, link.groups[1]?.value.orEmpty())
-                            val linkText = link.groups[4]?.value
-                            val isFullText = link.groups[3]?.value.isNullOrEmpty()
-
                             if (isFullText)
                                 append(linkText)
                             else // with ellipsis
                                 append("$linkText...")
                         }
+                        pop()
 
                         position = link.range.last + 1
                     }
-
-                    if (!links.none()) {
-                        append(substring.slice(position..substring.lastIndex))
-                    } else {
-                        append(substring)
-                    }
+                    val stringAfter =
+                        if (links.none()) substring
+                        else substring.slice(position..substring.lastIndex)
+                    append(stringAfter.parseAsHtml())
                 })
             }
         }
