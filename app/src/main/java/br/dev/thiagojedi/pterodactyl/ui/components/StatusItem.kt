@@ -30,7 +30,6 @@ import br.dev.thiagojedi.pterodactyl.data.model.mock.SimpleStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.StatusWithLinkAndHashtags
 import br.dev.thiagojedi.pterodactyl.ui.theme.PterodactylTheme
 import br.dev.thiagojedi.pterodactyl.utils.*
-import coil.compose.AsyncImage
 
 @Composable
 fun StatusItem(status: Status) {
@@ -52,8 +51,8 @@ fun StatusItem(status: Status) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    AsyncImage(
-                        model = actualStatus.account.avatarStatic,
+                    AnimatedAsyncImage(
+                        model = actualStatus.account.avatar,
                         contentDescription = "Avatar",
                         modifier = Modifier
                             .clip(RoundedCornerShape(12.dp))
@@ -162,7 +161,7 @@ fun StatusContent(status: Status) {
     )
     val context = LocalContext.current
 
-    val (content, inlineContent) = emojify(mastodonHtml, status.emojis, 16.sp, context)
+    val (content, inlineContent) = emojify(mastodonHtml, status.emojis, 16.sp)
 
     CustomClickableText(
         text = content,
@@ -204,8 +203,7 @@ fun RebloggedTag(status: Status) {
         val (annotatedString, inlineContent) = emojify(
             "Reblogged by ${account.display_name}",
             account.emojis,
-            textStyle.fontSize,
-            LocalContext.current
+            textStyle.fontSize
         )
 
         Text(text = annotatedString, inlineContent = inlineContent, style = textStyle)
@@ -217,7 +215,9 @@ fun AccountInfo(account: Account, modifier: Modifier = Modifier) {
     val textStyle = MaterialTheme.typography.titleMedium
 
     val (annotatedString, inlineContent) = emojify(
-        account.display_name, account.emojis, textStyle.fontSize, LocalContext.current
+        account.display_name,
+        account.emojis,
+        textStyle.fontSize
     )
 
     Column(modifier = modifier) {
