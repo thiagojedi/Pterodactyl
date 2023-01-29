@@ -109,38 +109,38 @@ fun parseMastodonHtml(
     }
 }
 
+private const val SECOND = 1000
+private const val MINUTE = 60 * SECOND
+private const val HOUR = 60 * MINUTE
+private const val DAY = 24 * HOUR
+
 fun Date.fromNow(): String {
     val formatter = RelativeDateTimeFormatter.getInstance()
     val now = Date()
     val diff = now.time - this.time
 
-    if (diff < 1000) {
-        return formatter.format(
+    return when {
+        diff < SECOND -> formatter.format(
             RelativeDateTimeFormatter.Direction.PLAIN,
             RelativeDateTimeFormatter.AbsoluteUnit.NOW
         )
-    }
-    if (diff < 60 * 1000) {
-        return formatter.format(
-            (diff / 1000).toDouble(),
+        diff < MINUTE -> formatter.format(
+            (diff / SECOND).toDouble(),
             RelativeDateTimeFormatter.Direction.LAST,
             RelativeDateTimeFormatter.RelativeUnit.SECONDS
         )
-    } else if (diff < 60 * 60 * 1000) {
-        return formatter.format(
-            (diff / (60 * 1000)).toDouble(),
+        diff < HOUR -> formatter.format(
+            (diff / MINUTE).toDouble(),
             RelativeDateTimeFormatter.Direction.LAST,
             RelativeDateTimeFormatter.RelativeUnit.MINUTES
         )
-    } else if (diff < 24 * 60 * 60 * 1000) {
-        return formatter.format(
-            (diff / (60 * 60 * 1000)).toDouble(),
+        diff < DAY -> formatter.format(
+            (diff / HOUR).toDouble(),
             RelativeDateTimeFormatter.Direction.LAST,
             RelativeDateTimeFormatter.RelativeUnit.HOURS
         )
-    } else {
-        return formatter.format(
-            (diff / (24 * 60 * 60 * 1000)).toDouble(),
+        else -> formatter.format(
+            (diff / DAY).toDouble(),
             RelativeDateTimeFormatter.Direction.LAST,
             RelativeDateTimeFormatter.RelativeUnit.DAYS
         )

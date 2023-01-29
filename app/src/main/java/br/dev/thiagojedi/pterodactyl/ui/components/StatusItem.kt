@@ -59,11 +59,12 @@ fun StatusItem(status: Status) {
                             .clip(RoundedCornerShape(12.dp))
                             .size(44.dp)
                     )
-                    AccountInfo(account = actualStatus.account)
+                    AccountInfo(
+                        account = actualStatus.account,
+                        modifier = Modifier.weight(1f)
+                    )
                     Spacer(
                         modifier = Modifier
-                            .weight(1f)
-                            .defaultMinSize(minWidth = 2.dp)
                     )
                     Text(
                         text = actualStatus.createdAt.fromNow(),
@@ -156,7 +157,6 @@ fun StatusContent(status: Status) {
     val mastodonHtml = parseMastodonHtml(
         status.content,
         status.mentions,
-        status.tags,
         paragraphStyle = paragraphStyle,
         linkStyle = linkStyle
     )
@@ -213,14 +213,14 @@ fun RebloggedTag(status: Status) {
 }
 
 @Composable
-fun AccountInfo(account: Account) {
+fun AccountInfo(account: Account, modifier: Modifier = Modifier) {
     val textStyle = MaterialTheme.typography.titleMedium
 
     val (annotatedString, inlineContent) = emojify(
         account.display_name, account.emojis, textStyle.fontSize, LocalContext.current
     )
 
-    Column {
+    Column(modifier = modifier) {
         Text(
             text = annotatedString,
             inlineContent = inlineContent,
