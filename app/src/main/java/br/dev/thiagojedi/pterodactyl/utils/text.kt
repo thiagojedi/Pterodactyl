@@ -22,6 +22,9 @@ private val paragraphPattern by lazy {
 private val aTagPattern by lazy {
     Regex("<a href=\"([^\"]+)\"[^>]*>(<span class=\"(ellipsis)?\">)?([^<]+?)(</span>)?</a>")
 }
+private val leadingSpacesPattern by lazy {
+    Regex("^(\\s+)")
+}
 const val URLTag = "URL"
 const val MentionTag = "MENTION"
 const val HashtagTag = "TAG"
@@ -68,7 +71,10 @@ fun parseMastodonHtml(
                     val stringAfter =
                         if (links.none()) substring
                         else substring.slice(position..substring.lastIndex)
-                    append(stringAfter.parseAsHtml())
+                    // This is needed because "parseAsHtml" trims leading spaces
+                    val leadingSpaces = leadingSpacesPattern.find(stringAfter)?.value.orEmpty()
+
+                    append(leadingSpaces + stringAfter.parseAsHtml())
                 })
             }
         }
@@ -92,7 +98,7 @@ fun parseMastodonHtml(
             }
         }
         val match = Pattern
-            .compile("(?:^|[^/)\\w])#([\\p{L}\\p{Digit}_]+)", Pattern.CASE_INSENSITIVE)
+            .compile("(?:^|[^/)\\w])#([\\p{L}\\d_]+)", Pattern.CASE_INSENSITIVE)
             .matcher(paragraphs)
 
         while (match.find()) {
