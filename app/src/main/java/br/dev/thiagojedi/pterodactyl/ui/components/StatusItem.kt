@@ -3,8 +3,13 @@ package br.dev.thiagojedi.pterodactyl.ui.components
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material.icons.rounded.*
@@ -16,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -24,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import br.dev.thiagojedi.pterodactyl.data.model.Account
+import br.dev.thiagojedi.pterodactyl.data.model.Filter
 import br.dev.thiagojedi.pterodactyl.data.model.Status
 import br.dev.thiagojedi.pterodactyl.data.model.mock.ReplyStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.SimpleStatus
@@ -34,6 +42,11 @@ import br.dev.thiagojedi.pterodactyl.utils.*
 @Composable
 fun StatusItem(status: Status) {
     val actualStatus = status.reblog ?: status
+    val density = LocalDensity.current
+
+    val (filtered, setFiltered) = remember {
+        mutableStateOf((actualStatus.filtered?.size ?: 0) > 0)
+    }
 
     Column(
         modifier = Modifier
@@ -41,41 +54,81 @@ fun StatusItem(status: Status) {
             .padding(horizontal = 16.dp, vertical = 4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        RebloggedTag(status = status)
+        AnimatedVisibility(
+            visible = !filtered,
+            enter = slideInVertically { with(density) { 40.dp.roundToPx() } }
+        ) {
+            RebloggedTag(status = status)
+        }
         Card {
-            Column(
-                modifier = Modifier.padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+            if (filtered) FilteredTag(status = actualStatus, onClick = { setFiltered(false) })
+            AnimatedVisibility(
+                visible = !filtered,
+                enter = slideInVertically() + expandVertically(expandFrom = Alignment.Top) + fadeIn(
+                    initialAlpha = 0.3f
+                ),
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                Column(
+                    modifier = Modifier.padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    AnimatedAsyncImage(
-                        model = actualStatus.account.avatar,
-                        contentDescription = "Avatar",
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
-                            .size(44.dp)
-                    )
-                    AccountInfo(
-                        account = actualStatus.account,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Spacer(
-                        modifier = Modifier
-                    )
-                    Text(
-                        text = actualStatus.createdAt.fromNow(),
-                        style = MaterialTheme.typography.labelSmall,
-                        maxLines = 1
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        AnimatedAsyncImage(
+                            model = actualStatus.account.avatar,
+                            contentDescription = "Avatar",
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .size(44.dp)
+                        )
+                        AccountInfo(
+                            account = actualStatus.account,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Spacer(
+                            modifier = Modifier
+                        )
+                        Text(
+                            text = actualStatus.createdAt.fromNow(),
+                            style = MaterialTheme.typography.labelSmall,
+                            maxLines = 1
+                        )
+                    }
+                    StatusContent(status = actualStatus)
+                    // TODO: StatusMedia(status = actualStatus)
+                    StatusActions(status = actualStatus)
                 }
-                StatusContent(status = actualStatus)
-                // TODO: StatusMedia(status = actualStatus)
-                StatusActions(status = actualStatus)
             }
         }
+    }
+}
+
+@Composable
+fun FilteredTag(status: Status, onClick: () -> Unit) {
+    val filterTitles =
+        status.filtered!!.filter { it.filter.filterAction != Filter.FilterAction.HIDE }
+            .joinToString { it.filter.title }
+
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "Hidden by filters: $filterTitles",
+            style = MaterialTheme.typography.labelSmall
+        )
+
+        ClickableText(
+            onClick = { onClick() },
+            text = AnnotatedString("Show anyway"),
+            style = MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.primary),
+            modifier = Modifier.padding(8.dp)
+        )
     }
 }
 

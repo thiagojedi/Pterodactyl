@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import br.dev.thiagojedi.pterodactyl.data.model.Filter
 import br.dev.thiagojedi.pterodactyl.data.model.Status
 import br.dev.thiagojedi.pterodactyl.data.services.RetrofitHelper
 import br.dev.thiagojedi.pterodactyl.data.services.TimeLineService
@@ -37,8 +38,17 @@ class TimeLineViewModel(context: Application) : AndroidViewModel(context) {
                     else -> api.getPublicTimeline()
                 }
 
-                result.body()?.let {
-                    list.addAll(elements = it, index = 0)
+                result.body()?.let { newItems ->
+                    val filteredStatus =
+                        newItems.filterNot {
+                            it.filtered != null && it.filtered.any { filterResult -> filterResult.filter.filterAction == Filter.FilterAction.HIDE }
+                        }
+
+                    if (filteredStatus.size < newItems.size) {
+                        Log.d(TAG, "getTimeline: statuses were filtered")
+                    }
+
+                    list.addAll(elements = filteredStatus, index = 0)
                 }
             } catch (ex: Exception) {
                 Log.e(TAG, "getTimeline: $type - ${ex.message}")

@@ -31,7 +31,8 @@ data class Status(
     val pinned: Boolean? = false,
     val tags: List<Tag>,
     val card: Card? = null,
-    val reblog: Status? = null
+    val reblog: Status? = null,
+    val filtered: List<FilterResult>? = null
 ) {
     data class Application(
         val name: String, val website: String?
