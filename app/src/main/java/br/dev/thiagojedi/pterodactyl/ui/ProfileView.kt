@@ -88,12 +88,7 @@ fun ProfileView(account: Account) {
             item { ProfileTitle(account = account) }
 
             item {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    val style = MaterialTheme.typography.labelSmall
-                    Text(text = "Posted ${account.statusesCount}", style = style)
-                    Text(text = "Following ${account.followingCount}", style = style)
-                    Text(text = "Followed ${account.followersCount}", style = style)
-                }
+                ProfileStats(account = account)
             }
 
             item {
@@ -104,6 +99,45 @@ fun ProfileView(account: Account) {
                 StatusItem(status = SimpleStatus)
             }
         }
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+private fun ProfileStats(account: Account) {
+    Row(
+        horizontalArrangement = Arrangement.Center
+    ) {
+        val modifier = Modifier.weight(1f)
+        Stats(
+            stat = pluralStringResource(R.plurals.stats_posts, account.statusesCount),
+            value = account.statusesCount,
+            modifier = modifier
+        )
+        Stats(
+            stat = stringResource(id = R.string.stats_following),
+            value = account.followingCount,
+            modifier = modifier
+        )
+        Stats(
+            stat = pluralStringResource(
+                id = R.plurals.stats_followers,
+                account.followersCount
+            ),
+            value = account.followersCount,
+            modifier = modifier
+        )
+    }
+}
+
+@Composable
+private fun Stats(stat: String, value: Int, modifier: Modifier = Modifier) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        Text(text = value.toString(), style = MaterialTheme.typography.labelLarge)
+        Text(text = stat, style = MaterialTheme.typography.labelSmall)
     }
 }
 
