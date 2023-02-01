@@ -18,6 +18,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val dataStore = AppStore(applicationContext)
 
+
         setContent {
             val savedUrl = dataStore.getBaseUrl.collectAsState(initial = "")
             if (savedUrl.value == null) {
@@ -25,7 +26,10 @@ class MainActivity : ComponentActivity() {
                 startActivity(intent)
             }
 
-            PterodactylTheme {
+            PterodactylTheme(
+                dynamicColor = false,
+                darkTheme = false
+            ) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
