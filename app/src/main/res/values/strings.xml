@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Pterodactyl</string>
+
+    <string name="home_screen" translatable="true">Home</string>
+    <string name="profile_screen" translatable="true">Profile</string>
+
+    <string name="stats_following" translatable="true">Following</string>
+    <plurals name="stats_followers">
+        <item quantity="one">Follower</item>
+        <item quantity="other">Followers</item>
+    </plurals>
+    <plurals name="stats_posts">
+        <item quantity="one">Post</item>
+        <item quantity="other">Posts</item>
+    </plurals>
 </resources>
