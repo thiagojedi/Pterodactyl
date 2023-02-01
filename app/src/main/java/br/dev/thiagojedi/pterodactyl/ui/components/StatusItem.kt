@@ -23,11 +23,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.dev.thiagojedi.pterodactyl.data.model.Account
 import br.dev.thiagojedi.pterodactyl.data.model.Filter
 import br.dev.thiagojedi.pterodactyl.data.model.Status
 import br.dev.thiagojedi.pterodactyl.data.model.mock.ReplyStatus
@@ -238,35 +236,6 @@ fun RebloggedTag(status: Status) {
         )
 
         Text(text = annotatedString, inlineContent = inlineContent, style = textStyle)
-    }
-}
-
-@Composable
-fun AccountInfo(account: Account, modifier: Modifier = Modifier) {
-    val textStyle = MaterialTheme.typography.titleMedium
-
-    val (annotatedString, inlineContent) = emojify(
-        account.display_name,
-        account.emojis,
-        textStyle.fontSize
-    )
-
-    Column(modifier = modifier) {
-        Text(
-            text = annotatedString,
-            inlineContent = inlineContent,
-            style = textStyle,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Text(
-            text = "@${account.acct}",
-            style = textStyle,
-            fontWeight = FontWeight.Light,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
     }
 }
 
