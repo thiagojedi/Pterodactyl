@@ -6,20 +6,25 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import br.dev.thiagojedi.pterodactyl.R
 import br.dev.thiagojedi.pterodactyl.data.model.Account
 import br.dev.thiagojedi.pterodactyl.data.model.mock.FakeAccount
 import br.dev.thiagojedi.pterodactyl.data.model.mock.SimpleStatus
@@ -35,10 +40,14 @@ import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileView(account: Account) {
+fun ProfileView(
+    account: Account,
+    userId: String? = "self",
+    canGoBack: Boolean = false,
+    onGoBack: () -> Unit = {}
+) {
     val density = LocalDensity.current
-    val scrollBehavior =
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val lazyListState = rememberLazyListState()
     val isCollapsed = remember { derivedStateOf { lazyListState.firstVisibleItemIndex > 1 } }
 
@@ -55,8 +64,7 @@ fun ProfileView(account: Account) {
                     AnimatedVisibility(
                         visible = isCollapsed.value,
                         enter = slideInVertically { with(density) { 40.dp.roundToPx() } },
-                        exit = slideOutVertically { with(density) { 50.dp.roundToPx() } }
-                    ) {
+                        exit = slideOutVertically { with(density) { 50.dp.roundToPx() } }) {
                         AccountInfo(account = account)
                     }
                 }
@@ -67,7 +75,17 @@ fun ProfileView(account: Account) {
                 containerColor = Color.Transparent,
                 scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer,
                 titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            ),
+                navigationIcon = {
+                    if (canGoBack) {
+                        IconButton(onClick = onGoBack) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = "Go back"
+                            )
+                        }
+                    }
+                }
             )
         }
     }) {
