@@ -10,7 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import br.dev.thiagojedi.pterodactyl.data.model.Account
-import br.dev.thiagojedi.pterodactyl.data.model.mock.Account
+import br.dev.thiagojedi.pterodactyl.data.model.mock.FakeAccount
 import coil.compose.AsyncImage
 
 @Composable
@@ -46,5 +46,5 @@ enum class AvatarSize {
 @Preview
 @Composable
 private fun AvatarPreview() {
-    Avatar(account = Account)
+    Avatar(account = FakeAccount)
 }

@@ -4,7 +4,7 @@ import br.dev.thiagojedi.pterodactyl.data.model.Account
 import java.text.SimpleDateFormat
 import java.util.*
 
-val Account = Account(
+val FakeAccount = Account(
     id = "109302720308687498",
     username = "jedi",
     acct = "jedi",

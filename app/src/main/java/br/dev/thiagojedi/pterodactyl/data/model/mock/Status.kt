@@ -34,7 +34,7 @@ var SimpleStatus = Status(
         name = "Tusky",
         website = "https://tusky.app"
     ),
-    account = Account,
+    account = FakeAccount,
     mediaAttachments = emptyList(),
     mentions = emptyList(),
     tags = emptyList(),
@@ -64,7 +64,7 @@ val ReplyStatus = Status(
     content = "<p><span class=\"h-card\"><a href=\"https://cuscuz.in/@jedi\" class=\"u-url mention\" rel=\"nofollow noopener noreferrer\" target=\"_blank\">@<span>jedi</span></a></span> <span class=\"h-card\"><a href=\"https://ursal.zone/@Ajoyceda\" class=\"u-url mention\" rel=\"nofollow noopener noreferrer\" target=\"_blank\">@<span>Ajoyceda</span></a></span> seria uma pena se a coxinha em questão fosse feita de massa de batata ou macaxeira, não massa de ossos 😆</p>",
 //    filtered=[],
 //    reblog=null,
-    account = Account,
+    account = FakeAccount,
     mediaAttachments = emptyList(),
     mentions = listOf(
         Status.Mention(
@@ -113,7 +113,7 @@ val StatusWithLinkAndHashtags = Status(
         name = "Web",
         website = null
     ),
-    account = Account,
+    account = FakeAccount,
     mediaAttachments = emptyList(),
     mentions = emptyList(),
     tags = listOf(
