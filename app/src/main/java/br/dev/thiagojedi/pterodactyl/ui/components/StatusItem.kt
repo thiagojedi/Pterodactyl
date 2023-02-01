@@ -36,6 +36,7 @@ import br.dev.thiagojedi.pterodactyl.data.model.Status
 import br.dev.thiagojedi.pterodactyl.data.model.mock.ReplyStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.SimpleStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.StatusWithLinkAndHashtags
+import br.dev.thiagojedi.pterodactyl.ui.designSystem.Avatar
 import br.dev.thiagojedi.pterodactyl.ui.theme.PterodactylTheme
 import br.dev.thiagojedi.pterodactyl.utils.*
 
@@ -76,13 +77,7 @@ fun StatusItem(status: Status) {
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        AnimatedAsyncImage(
-                            model = actualStatus.account.avatar,
-                            contentDescription = "Avatar",
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(12.dp))
-                                .size(44.dp)
-                        )
+                        Avatar(account = actualStatus.account)
                         AccountInfo(
                             account = actualStatus.account,
                             modifier = Modifier.weight(1f)
