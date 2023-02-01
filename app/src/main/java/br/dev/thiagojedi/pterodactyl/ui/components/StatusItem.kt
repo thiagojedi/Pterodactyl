@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
@@ -37,7 +38,7 @@ import br.dev.thiagojedi.pterodactyl.ui.theme.PterodactylTheme
 import br.dev.thiagojedi.pterodactyl.utils.*
 
 @Composable
-fun StatusItem(status: Status) {
+fun StatusItem(status: Status, onUserClick: (id: String) -> Unit = {}) {
     val actualStatus = status.reblog ?: status
     val density = LocalDensity.current
 
@@ -73,7 +74,9 @@ fun StatusItem(status: Status) {
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        Avatar(account = actualStatus.account)
+                        Avatar(account = actualStatus.account, modifier = Modifier.clickable {
+                            onUserClick(actualStatus.account.id)
+                        })
                         AccountInfo(
                             account = actualStatus.account,
                             modifier = Modifier.weight(1f)
