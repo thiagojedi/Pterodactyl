@@ -6,7 +6,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import br.dev.thiagojedi.pterodactyl.R
 import br.dev.thiagojedi.pterodactyl.data.store.AppStore
 import kotlinx.coroutines.launch
 
@@ -17,7 +19,7 @@ fun PteroTopBar() {
     val scope = rememberCoroutineScope()
 
     CenterAlignedTopAppBar(
-        title = { Text(text = "Pterodactyl") },
+        title = { Text(text = stringResource(id = R.string.app_name)) },
         actions = {
             IconButton(onClick = {
                 scope.launch {
