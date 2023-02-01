@@ -8,7 +8,6 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Reply
@@ -19,7 +18,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
@@ -29,13 +27,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import br.dev.thiagojedi.pterodactyl.data.model.Account
 import br.dev.thiagojedi.pterodactyl.data.model.Filter
 import br.dev.thiagojedi.pterodactyl.data.model.Status
 import br.dev.thiagojedi.pterodactyl.data.model.mock.ReplyStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.SimpleStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.StatusWithLinkAndHashtags
+import br.dev.thiagojedi.pterodactyl.ui.actions.ShareAction
 import br.dev.thiagojedi.pterodactyl.ui.designSystem.Avatar
 import br.dev.thiagojedi.pterodactyl.ui.theme.PterodactylTheme
 import br.dev.thiagojedi.pterodactyl.utils.*
@@ -140,7 +138,6 @@ fun StatusActions(status: Status) {
     }
     val tint = MaterialTheme.colorScheme.onSurface
     val selectedTint = MaterialTheme.colorScheme.primary
-    val context = LocalContext.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -173,21 +170,7 @@ fun StatusActions(status: Status) {
                 tint = if (bookmarked) selectedTint else tint
             )
         }
-        IconButton(onClick = {
-            val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, status.url)
-                type = "text/plain"
-            }
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(context, shareIntent, null)
-        }) {
-            Icon(
-                Icons.Rounded.Share,
-                contentDescription = "Share",
-                tint = tint
-            )
-        }
+        ShareAction(content = status.url, tint = tint)
         IconButton(onClick = { }, enabled = false) {
             Icon(Icons.Rounded.MoreHoriz, contentDescription = "More actions")
         }
