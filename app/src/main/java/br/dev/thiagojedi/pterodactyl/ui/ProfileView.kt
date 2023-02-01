@@ -123,7 +123,11 @@ private fun ProfileDescription(account: Account) {
         account.note, paragraphStyle = MaterialTheme.typography.bodyMedium.toParagraphStyle()
     )
     val (annotated, inlineContent) = emojify(description, account.emojis)
-    Text(text = annotated, inlineContent = inlineContent, modifier = Modifier.padding(16.dp))
+    Text(
+        text = annotated,
+        inlineContent = inlineContent, modifier = Modifier.padding(16.dp),
+        style = MaterialTheme.typography.bodyMedium
+    )
 }
 
 @Preview(
