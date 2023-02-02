@@ -22,6 +22,8 @@ sealed class Screen(val route: String, @StringRes val resourceId: Int, val icon:
     object Profile : Screen("profile", R.string.profile_screen, Icons.Filled.Person)
 }
 
+private const val TAG = "PteroNavBar"
+
 @Composable
 fun PteroNavBar(navController: NavController) {
     val tabs = listOf(
@@ -29,12 +31,15 @@ fun PteroNavBar(navController: NavController) {
         Screen.Profile
     )
 
+
     NavigationBar {
         val navBackStackEntry = navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry.value?.destination
         for (screen in tabs) {
             NavigationBarItem(
-                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                selected = currentDestination?.hierarchy?.any {
+                    it.route == screen.route
+                } == true,
                 icon = {
                     Icon(
                         screen.icon,
