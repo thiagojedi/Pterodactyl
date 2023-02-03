@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import br.dev.thiagojedi.pterodactyl.navigation.navigateToProfile
 import br.dev.thiagojedi.pterodactyl.ui.components.PteroNavBar
 import br.dev.thiagojedi.pterodactyl.ui.components.Screen
 import br.dev.thiagojedi.pterodactyl.ui.viewModel.AppViewModel
@@ -31,11 +32,7 @@ fun PteroApp() {
                 Scaffold(bottomBar = { PteroNavBar(navController = navController) }) {
                     Surface(Modifier.padding(it)) {
                         HomeTimeLineView(
-                            onNavigateToUser = { id ->
-                                navController.navigate("profile/$id") {
-                                    launchSingleTop = true
-                                }
-                            }
+                            onNavigateToUser = { id -> navController.navigateToProfile(id) }
                         )
                     }
                 }
@@ -45,7 +42,10 @@ fun PteroApp() {
                     Surface(Modifier.padding(it)) {
                         val userId = appViewModel.currentUserId.collectAsState(initial = null).value
                         if (userId != null) {
-                            ProfileView(userId)
+                            ProfileView(
+                                userId,
+                                currentUser = true,
+                                onNavigateToUser = { navController.navigateToProfile(it) })
                         }
                     }
                 }
@@ -54,10 +54,14 @@ fun PteroApp() {
         composable(
             "profile/{userId}"
         ) { entry ->
+            val currentUserId = appViewModel.currentUserId.collectAsState(initial = null).value
+            val userId = entry.arguments?.getString("userId")!!
             ProfileView(
-                entry.arguments?.getString("userId")!!,
+                userId,
                 canGoBack = navController.previousBackStackEntry !== null,
-                onGoBack = { navController.popBackStack() }
+                onGoBack = { navController.popBackStack() },
+                onNavigateToUser = { navController.navigateToProfile(it) },
+                currentUser = userId == currentUserId
             )
         }
     }

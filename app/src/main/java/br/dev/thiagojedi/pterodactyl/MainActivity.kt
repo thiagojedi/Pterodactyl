@@ -26,10 +26,7 @@ class MainActivity : ComponentActivity() {
                 startActivity(intent)
             }
 
-            PterodactylTheme(
-                dynamicColor = false,
-                darkTheme = false
-            ) {
+            PterodactylTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),

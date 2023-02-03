@@ -8,15 +8,24 @@ import br.dev.thiagojedi.pterodactyl.ui.viewModel.ProfileViewModel
 
 @Composable
 fun ProfileView(
-    userId: String, canGoBack: Boolean = false,
-    onGoBack: () -> Unit = {}, viewModel: ProfileViewModel = viewModel()
+    userId: String,
+    canGoBack: Boolean = false,
+    onGoBack: () -> Unit = {},
+    viewModel: ProfileViewModel = viewModel(),
+    onNavigateToUser: (String) -> Unit = {},
+    currentUser: Boolean = false
 ) {
     LaunchedEffect(userId) {
-        if (userId != "self")
-            viewModel.getAccountDetails(userId)
+        viewModel.getAccountDetails(userId)
     }
     val account = viewModel.accountDetails.value
     if (account != null) {
-        ProfileDetails(account = account, canGoBack = canGoBack, onGoBack = onGoBack)
+        ProfileDetails(
+            account = account,
+            canGoBack = canGoBack,
+            onGoBack = onGoBack,
+            onNavigateToUser,
+            currentAccount = currentUser
+        )
     }
 }

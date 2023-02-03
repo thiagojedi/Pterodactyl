@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.dev.thiagojedi.pterodactyl.data.model.Filter
 import br.dev.thiagojedi.pterodactyl.data.model.Status
+import br.dev.thiagojedi.pterodactyl.data.model.mock.RebloggedStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.ReplyStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.SimpleStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.StatusWithLinkAndHashtags
@@ -90,7 +91,7 @@ fun StatusItem(status: Status, onUserClick: (id: String) -> Unit = {}) {
                             maxLines = 1
                         )
                     }
-                    StatusContent(status = actualStatus)
+                    StatusContent(status = actualStatus, onMentionClick = onUserClick)
                     // TODO: StatusMedia(status = actualStatus)
                     StatusActions(status = actualStatus)
                 }
@@ -179,7 +180,7 @@ fun StatusActions(status: Status) {
 }
 
 @Composable
-fun StatusContent(status: Status) {
+fun StatusContent(status: Status, onMentionClick: (String) -> Unit = {}) {
     val highlightStyle =
         SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
     val textStyle = MaterialTheme.typography.bodyMedium
@@ -204,11 +205,7 @@ fun StatusContent(status: Status) {
         onClick = {
             content.getStringAnnotations(it, it).firstOrNull()?.let { annotation ->
                 when (annotation.tag) {
-                    MentionTag -> Toast.makeText(
-                        context,
-                        "Mention ${annotation.item}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    MentionTag -> onMentionClick(annotation.item)
                     HashtagTag -> Toast.makeText(
                         context,
                         "Hashtag ${annotation.item}",
@@ -244,7 +241,7 @@ fun RebloggedTag(status: Status) {
 
 @Preview
 @Composable
-fun PreviewSimpleStatusItem() {
+private fun PreviewSimpleStatusItem() {
     PterodactylTheme {
         StatusItem(status = SimpleStatus)
     }
@@ -252,7 +249,7 @@ fun PreviewSimpleStatusItem() {
 
 @Preview
 @Composable
-fun PreviewReplyStatusItem() {
+private fun PreviewReplyStatusItem() {
     PterodactylTheme {
         StatusItem(status = ReplyStatus)
     }
@@ -260,8 +257,16 @@ fun PreviewReplyStatusItem() {
 
 @Preview
 @Composable
-fun PreviewStatusWithHastagsAndLink() {
+private fun PreviewStatusWithHastagsAndLink() {
     PterodactylTheme {
         StatusItem(status = StatusWithLinkAndHashtags)
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewRebloggedStatus() {
+    PterodactylTheme {
+        StatusItem(status = RebloggedStatus)
     }
 }

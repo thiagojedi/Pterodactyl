@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -30,6 +29,7 @@ import br.dev.thiagojedi.pterodactyl.R
 import br.dev.thiagojedi.pterodactyl.data.model.Account
 import br.dev.thiagojedi.pterodactyl.data.model.mock.FakeAccount
 import br.dev.thiagojedi.pterodactyl.data.model.mock.SimpleStatus
+import br.dev.thiagojedi.pterodactyl.ui.actions.LogoutAction
 import br.dev.thiagojedi.pterodactyl.ui.actions.ShareAction
 import br.dev.thiagojedi.pterodactyl.ui.designSystem.Avatar
 import br.dev.thiagojedi.pterodactyl.ui.designSystem.AvatarSize
@@ -43,7 +43,9 @@ import coil.compose.AsyncImage
 fun ProfileDetails(
     account: Account,
     canGoBack: Boolean = false,
-    onGoBack: () -> Unit = {}
+    onGoBack: () -> Unit = {},
+    onNavigateToUser: (String) -> Unit = {},
+    currentAccount: Boolean = false
 ) {
     val density = LocalDensity.current
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -60,32 +62,30 @@ fun ProfileDetails(
             )
             LargeTopAppBar(title = {
                 Column {
-                    AnimatedVisibility(
-                        visible = isCollapsed.value,
+                    AnimatedVisibility(visible = isCollapsed.value,
                         enter = slideInVertically { with(density) { 40.dp.roundToPx() } },
                         exit = slideOutVertically { with(density) { 50.dp.roundToPx() } }) {
                         AccountInfo(account = account)
                     }
                 }
             }, scrollBehavior = scrollBehavior, actions = {
-                Icon(Icons.Filled.PersonAdd, contentDescription = "Add to followers")
                 ShareAction(content = account.url)
+                if (currentAccount) {
+                    LogoutAction()
+                }
             }, colors = TopAppBarDefaults.largeTopAppBarColors(
                 containerColor = Color.Transparent,
                 scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer,
                 titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ),
-                navigationIcon = {
-                    if (canGoBack) {
-                        IconButton(onClick = onGoBack) {
-                            Icon(
-                                imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = "Go back"
-                            )
-                        }
+            ), navigationIcon = {
+                if (canGoBack) {
+                    IconButton(onClick = onGoBack) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack, contentDescription = "Go back"
+                        )
                     }
                 }
-            )
+            })
         }
     }) {
         LazyColumn(
@@ -113,7 +113,7 @@ fun ProfileDetails(
             }
 
             items(3) {
-                StatusItem(status = SimpleStatus)
+                StatusItem(status = SimpleStatus, onUserClick = onNavigateToUser)
             }
         }
     }
@@ -179,7 +179,8 @@ private fun ProfileDescription(account: Account) {
     val (annotated, inlineContent) = emojify(description, account.emojis, style.fontSize)
     Text(
         text = annotated,
-        inlineContent = inlineContent, modifier = Modifier.padding(16.dp),
+        inlineContent = inlineContent,
+        modifier = Modifier.padding(16.dp),
         style = style
     )
 }
