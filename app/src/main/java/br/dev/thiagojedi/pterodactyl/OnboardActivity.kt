@@ -8,17 +8,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import br.dev.thiagojedi.pterodactyl.data.model.Application
 import br.dev.thiagojedi.pterodactyl.data.services.AppService
 import br.dev.thiagojedi.pterodactyl.data.services.RetrofitHelper
-import br.dev.thiagojedi.pterodactyl.ui.theme.PterodactylTheme
+import br.dev.thiagojedi.pterodactyl.ui.LoginView
 import br.dev.thiagojedi.pterodactyl.ui.viewModel.AppViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -39,29 +34,9 @@ class OnboardActivity : ComponentActivity() {
         setContent {
             val scope = rememberCoroutineScope()
 
-            PterodactylTheme {
-                val (url, setUrl) = remember { mutableStateOf("") }
-
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    TextField(value = url, onValueChange = setUrl, Modifier.fillMaxWidth())
-                    Button(
-                        onClick = {
-                            scope.launch {
-                                registerApp(url)
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = url.contains(Regex("https://.+\\..+"))
-                    ) {
-                        Text("Continue")
-                    }
-                    Spacer(modifier = Modifier.height(32.dp))
-                    val savedUrl = viewModel.baseUrl.collectAsState(initial = "")
-
-                    Text(text = savedUrl.value.orEmpty())
+            LoginView { url ->
+                scope.launch {
+                    registerApp(url)
                 }
             }
         }
