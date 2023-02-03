@@ -4,7 +4,7 @@ import br.dev.thiagojedi.pterodactyl.data.model.Account
 import java.text.SimpleDateFormat
 import java.util.*
 
-val Account = Account(
+val FakeAccount = Account(
     id = "109302720308687498",
     username = "jedi",
     acct = "jedi",
@@ -24,20 +24,20 @@ val Account = Account(
     lastStatusAt = SimpleDateFormat("yyyy-MM-dd").parse("2023-01-07") as Date,
     emojis = emptyList(),
     fields = listOf(
-        br.dev.thiagojedi.pterodactyl.data.model.Account.Field(
+        Account.Field(
             name = "Blog/portifólio",
             value = "<a href=\"https://thiagojedi.github.io\" target=\"_blank\" rel=\"nofollow noopener noreferrer me\"><span class=\"invisible\">https://</span><span class=\"\">thiagojedi.github.io</span><span class=\"invisible\"></span></a>",
             verifiedAt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse("2022-11-09T18:08:40.836+00:00")
         ),
-        br.dev.thiagojedi.pterodactyl.data.model.Account.Field(
+        Account.Field(
             name = "working at",
             value = "<a href=\"https://www.agilecontent.com\" target=\"_blank\" rel=\"nofollow noopener noreferrer me\"><span class=\"invisible\">https://www.</span><span class=\"\">agilecontent.com</span><span class=\"invisible\"></span></a>",
             verifiedAt = null
         ),
-        br.dev.thiagojedi.pterodactyl.data.model.Account.Field(
+        Account.Field(
             name = "Idiomas/Languages", value = "PT-Br, PT-Pt, EN, ES,", verifiedAt = null
         ),
-        br.dev.thiagojedi.pterodactyl.data.model.Account.Field(
+        Account.Field(
             name = "Pronomes", value = "Ele/Dele He/His", verifiedAt = null
         )
     )

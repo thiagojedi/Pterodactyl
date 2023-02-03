@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 val formatWithoutZone = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-var SimpleStatus = Status(
+val SimpleStatus = Status(
     id = "109648375748440347",
     createdAt = formatWithoutZone.parse("2023-01-07T14:23:56.618Z") as Date,
     inReplyToId = null,
@@ -34,7 +34,7 @@ var SimpleStatus = Status(
         name = "Tusky",
         website = "https://tusky.app"
     ),
-    account = Account,
+    account = FakeAccount,
     mediaAttachments = emptyList(),
     mentions = emptyList(),
     tags = emptyList(),
@@ -64,7 +64,7 @@ val ReplyStatus = Status(
     content = "<p><span class=\"h-card\"><a href=\"https://cuscuz.in/@jedi\" class=\"u-url mention\" rel=\"nofollow noopener noreferrer\" target=\"_blank\">@<span>jedi</span></a></span> <span class=\"h-card\"><a href=\"https://ursal.zone/@Ajoyceda\" class=\"u-url mention\" rel=\"nofollow noopener noreferrer\" target=\"_blank\">@<span>Ajoyceda</span></a></span> seria uma pena se a coxinha em questão fosse feita de massa de batata ou macaxeira, não massa de ossos 😆</p>",
 //    filtered=[],
 //    reblog=null,
-    account = Account,
+    account = FakeAccount,
     mediaAttachments = emptyList(),
     mentions = listOf(
         Status.Mention(
@@ -113,7 +113,7 @@ val StatusWithLinkAndHashtags = Status(
         name = "Web",
         website = null
     ),
-    account = Account,
+    account = FakeAccount,
     mediaAttachments = emptyList(),
     mentions = emptyList(),
     tags = listOf(
@@ -159,4 +159,30 @@ val StatusWithLinkAndHashtags = Status(
         blurhash = "U66aYT33%J%K^66L$%xGR#XltQoxAB-CNtNa"
     ),
 //        poll=null
+)
+val RebloggedStatus = Status(
+    id = "109794723275118588",
+    createdAt = formatWithoutZone.parse("2023-02-02T10:42:02.632Z") as Date,
+    inReplyToId = null,
+    inReplyToAccountId = null,
+    sensitive = false,
+    spoilerText = "",
+    visibility = "public",
+    language = null,
+    uri = "https://floss.social/users/megalodon/statuses/109794723275118588/activity",
+    url = "https://floss.social/users/megalodon/statuses/109794723275118588/activity",
+    repliesCount = 0,
+    reblogsCount = 0,
+    favouritesCount = 0,
+    editedAt = null,
+    content = "",
+    reblog = SimpleStatus,
+    account = FakeAccount,
+    application = null,
+    mediaAttachments = emptyList(),
+    mentions = emptyList(),
+    tags = emptyList(),
+    emojis = emptyList(),
+    card = null,
+//poll =  null
 )
