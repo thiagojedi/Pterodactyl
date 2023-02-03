@@ -7,9 +7,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.*
+import androidx.compose.runtime.rememberCoroutineScope
 import br.dev.thiagojedi.pterodactyl.data.model.Application
 import br.dev.thiagojedi.pterodactyl.data.services.AppService
 import br.dev.thiagojedi.pterodactyl.data.services.RetrofitHelper
@@ -19,7 +17,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import net.openid.appauth.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 class OnboardActivity : ComponentActivity() {
     private lateinit var service: AuthorizationService
     private lateinit var viewModel: AppViewModel
@@ -53,7 +50,7 @@ class OnboardActivity : ComponentActivity() {
 
     suspend fun registerApp(url: String) {
         coroutineScope {
-            val api = RetrofitHelper.getInstance(url).create(AppService::class.java)
+            val api = RetrofitHelper.getInstance("https://$url").create(AppService::class.java)
             val result = api.createAppToken(
                 clientName = "Pterodactyl",
                 redirectUris = redirectUri,
@@ -61,8 +58,7 @@ class OnboardActivity : ComponentActivity() {
                 website = "https://github.com/thiagojedi/Pterodactyl"
             )
 
-            if (
-                result.isSuccessful) {
+            if (result.isSuccessful) {
                 val app = result.body()!!
 
                 viewModel.setBaseUrl(url)
@@ -78,8 +74,7 @@ class OnboardActivity : ComponentActivity() {
         val redirectUri = Uri.parse(this.redirectUri)
         val authorizationUri = Uri.parse(url + "/oauth/authorize")
         val tokenUri = Uri.parse(url + "/oauth/token")
-        val configuration =
-            AuthorizationServiceConfiguration(authorizationUri, tokenUri)
+        val configuration = AuthorizationServiceConfiguration(authorizationUri, tokenUri)
         val request = AuthorizationRequest.Builder(
             configuration,
             app.client_id!!,
