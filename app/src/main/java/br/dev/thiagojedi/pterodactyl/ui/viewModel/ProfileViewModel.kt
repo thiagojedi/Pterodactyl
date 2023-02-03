@@ -17,8 +17,12 @@ class ProfileViewModel(context: Application) : AndroidViewModel(context) {
     val accountDetails = mutableStateOf<Account?>(null)
 
     suspend fun getAccountDetails(id: String) {
-        val baseUrl = store.getBaseUrl.first()!!
-        val userToken = store.getUserToken.first()!!
+        val baseUrl = store.getBaseUrl.first()
+        val userToken = store.getUserToken.first()
+
+        if (baseUrl == null || userToken == null) {
+            return
+        }
         val api =
             RetrofitHelper.getInstance(baseUrl, userToken)
                 .create(AccountService::class.java)

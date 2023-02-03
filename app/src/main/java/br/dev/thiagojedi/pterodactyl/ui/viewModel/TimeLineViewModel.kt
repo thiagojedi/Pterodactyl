@@ -24,8 +24,12 @@ class TimeLineViewModel(context: Application) : AndroidViewModel(context) {
     suspend fun getLocalTimeline() = getTimeline("local", localTimeLine)
 
     private suspend fun getTimeline(type: String, list: MutableList<Status>) {
-        val baseUrl = store.getBaseUrl.first()!!
-        val userToken = store.getUserToken.first()!!
+        val baseUrl = store.getBaseUrl.first()
+        val userToken = store.getUserToken.first()
+
+        if (baseUrl == null || userToken == null) {
+            return
+        }
         val api =
             RetrofitHelper.getInstance(baseUrl, userToken)
                 .create(TimeLineService::class.java)
