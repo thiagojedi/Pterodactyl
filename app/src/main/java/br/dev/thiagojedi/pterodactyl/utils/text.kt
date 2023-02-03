@@ -91,7 +91,7 @@ fun parseMastodonHtml(
                 addStyle(linkStyle, match.start(), match.end())
                 addStringAnnotation(
                     tag = MentionTag,
-                    annotation = mention.url,
+                    annotation = mention.id,
                     start = match.start(),
                     end = match.end()
                 )

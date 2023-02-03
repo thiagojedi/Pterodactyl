@@ -29,13 +29,13 @@ private fun annotateEmojis(source: AnnotatedString, emojis: List<CustomEmoji>) =
 fun emojify(
     source: String,
     emojis: List<CustomEmoji>,
-    emojiSize: TextUnit = TextUnit.Unspecified,
+    emojiSize: TextUnit,
 ) = emojify(AnnotatedString(source), emojis, emojiSize)
 
 fun emojify(
     source: AnnotatedString,
     emojis: List<CustomEmoji>,
-    emojiSize: TextUnit = TextUnit.Unspecified,
+    emojiSize: TextUnit,
 ): Pair<AnnotatedString, Map<String, InlineTextContent>> {
     val annotatedString = annotateEmojis(source, emojis)
     val inlineContent = emojis.map { (shortcode, url) ->

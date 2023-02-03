@@ -7,8 +7,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Reply
@@ -19,28 +19,27 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
-import br.dev.thiagojedi.pterodactyl.data.model.Account
 import br.dev.thiagojedi.pterodactyl.data.model.Filter
 import br.dev.thiagojedi.pterodactyl.data.model.Status
+import br.dev.thiagojedi.pterodactyl.data.model.mock.RebloggedStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.ReplyStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.SimpleStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.StatusWithLinkAndHashtags
+import br.dev.thiagojedi.pterodactyl.ui.actions.ShareAction
+import br.dev.thiagojedi.pterodactyl.ui.designSystem.Avatar
 import br.dev.thiagojedi.pterodactyl.ui.theme.PterodactylTheme
 import br.dev.thiagojedi.pterodactyl.utils.*
 
 @Composable
-fun StatusItem(status: Status) {
+fun StatusItem(status: Status, onUserClick: (id: String) -> Unit = {}) {
     val actualStatus = status.reblog ?: status
     val density = LocalDensity.current
 
@@ -76,13 +75,9 @@ fun StatusItem(status: Status) {
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        AnimatedAsyncImage(
-                            model = actualStatus.account.avatar,
-                            contentDescription = "Avatar",
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(12.dp))
-                                .size(44.dp)
-                        )
+                        Avatar(account = actualStatus.account, modifier = Modifier.clickable {
+                            onUserClick(actualStatus.account.id)
+                        })
                         AccountInfo(
                             account = actualStatus.account,
                             modifier = Modifier.weight(1f)
@@ -96,7 +91,7 @@ fun StatusItem(status: Status) {
                             maxLines = 1
                         )
                     }
-                    StatusContent(status = actualStatus)
+                    StatusContent(status = actualStatus, onMentionClick = onUserClick)
                     // TODO: StatusMedia(status = actualStatus)
                     StatusActions(status = actualStatus)
                 }
@@ -145,7 +140,6 @@ fun StatusActions(status: Status) {
     }
     val tint = MaterialTheme.colorScheme.onSurface
     val selectedTint = MaterialTheme.colorScheme.primary
-    val context = LocalContext.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -178,21 +172,7 @@ fun StatusActions(status: Status) {
                 tint = if (bookmarked) selectedTint else tint
             )
         }
-        IconButton(onClick = {
-            val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, status.url)
-                type = "text/plain"
-            }
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(context, shareIntent, null)
-        }) {
-            Icon(
-                Icons.Rounded.Share,
-                contentDescription = "Share",
-                tint = tint
-            )
-        }
+        ShareAction(content = status.url, tint = tint)
         IconButton(onClick = { }, enabled = false) {
             Icon(Icons.Rounded.MoreHoriz, contentDescription = "More actions")
         }
@@ -200,7 +180,7 @@ fun StatusActions(status: Status) {
 }
 
 @Composable
-fun StatusContent(status: Status) {
+fun StatusContent(status: Status, onMentionClick: (String) -> Unit = {}) {
     val highlightStyle =
         SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
     val textStyle = MaterialTheme.typography.bodyMedium
@@ -225,11 +205,7 @@ fun StatusContent(status: Status) {
         onClick = {
             content.getStringAnnotations(it, it).firstOrNull()?.let { annotation ->
                 when (annotation.tag) {
-                    MentionTag -> Toast.makeText(
-                        context,
-                        "Mention ${annotation.item}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    MentionTag -> onMentionClick(annotation.item)
                     HashtagTag -> Toast.makeText(
                         context,
                         "Hashtag ${annotation.item}",
@@ -263,38 +239,9 @@ fun RebloggedTag(status: Status) {
     }
 }
 
-@Composable
-fun AccountInfo(account: Account, modifier: Modifier = Modifier) {
-    val textStyle = MaterialTheme.typography.titleMedium
-
-    val (annotatedString, inlineContent) = emojify(
-        account.display_name,
-        account.emojis,
-        textStyle.fontSize
-    )
-
-    Column(modifier = modifier) {
-        Text(
-            text = annotatedString,
-            inlineContent = inlineContent,
-            style = textStyle,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Text(
-            text = "@${account.acct}",
-            style = textStyle,
-            fontWeight = FontWeight.Light,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
-}
-
 @Preview
 @Composable
-fun PreviewSimpleStatusItem() {
+private fun PreviewSimpleStatusItem() {
     PterodactylTheme {
         StatusItem(status = SimpleStatus)
     }
@@ -302,7 +249,7 @@ fun PreviewSimpleStatusItem() {
 
 @Preview
 @Composable
-fun PreviewReplyStatusItem() {
+private fun PreviewReplyStatusItem() {
     PterodactylTheme {
         StatusItem(status = ReplyStatus)
     }
@@ -310,8 +257,16 @@ fun PreviewReplyStatusItem() {
 
 @Preview
 @Composable
-fun PreviewStatusWithHastagsAndLink() {
+private fun PreviewStatusWithHastagsAndLink() {
     PterodactylTheme {
         StatusItem(status = StatusWithLinkAndHashtags)
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewRebloggedStatus() {
+    PterodactylTheme {
+        StatusItem(status = RebloggedStatus)
     }
 }
