@@ -1,5 +1,6 @@
 package br.dev.thiagojedi.pterodactyl.ui.viewModel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import br.dev.thiagojedi.pterodactyl.data.model.Application
 import br.dev.thiagojedi.pterodactyl.data.store.AppStore
@@ -31,11 +32,12 @@ class AppViewModel(context: android.app.Application) : PteroViewModel(context) {
     suspend fun validateUser() {
         viewModelScope.launch {
             try {
-                api.verifyCredentials().body()?.let {
-                    store.saveAccountId(it.id)
+                val response = api.verifyCredentials()
+                if (!response.isSuccessful && response.code() == 401) {
+                    store.clearBaseUrl()
                 }
             } catch (ex: Exception) {
-                store.clearBaseUrl()
+                Log.e(AppViewModel::class.simpleName, "validateUser: $ex")
             }
         }
     }

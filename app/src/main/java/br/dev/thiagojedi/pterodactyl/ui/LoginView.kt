@@ -28,7 +28,7 @@ fun LoginView(onLoginButtonClick: (String) -> Unit) {
             ) {
                 TextField(
                     value = url,
-                    onValueChange = setUrl,
+                    onValueChange = { value -> setUrl(value.lowercase()) },
                     Modifier
                         .padding(bottom = 8.dp)
                         .border(1.dp, MaterialTheme.colorScheme.primary)

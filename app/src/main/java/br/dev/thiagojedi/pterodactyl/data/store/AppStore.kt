@@ -33,10 +33,7 @@ class AppStore(private val context: Context) {
     }
 
     suspend fun clearBaseUrl() {
-        context.dataStore.edit { preferences ->
-            preferences.remove(BASE_URL_KEY)
-            preferences.remove(ACCOUNT_ID)
-        }
+        context.dataStore.edit { preferences -> preferences.clear() }
     }
 
     val getBaseUrl = context.dataStore.data.map { prefs -> prefs[BASE_URL_KEY] }

@@ -6,7 +6,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -18,8 +18,7 @@ import br.dev.thiagojedi.pterodactyl.ui.viewModel.AppViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PteroApp() {
-    val appViewModel = AppViewModel(LocalContext.current)
+fun PteroApp(appViewModel: AppViewModel = viewModel()) {
     val navController = rememberNavController()
 
     LaunchedEffect(Unit) {
