@@ -10,7 +10,7 @@ data class Status(
     @SerializedName("in_reply_to_account_id") val inReplyToAccountId: String?,
     val sensitive: Boolean,
     @SerializedName("spoiler_text") val spoilerText: String?,
-    val visibility: String,
+    val visibility: Visibility,
     val language: String? = null,
     val uri: String,
     val url: String,
@@ -95,6 +95,8 @@ data class Status(
     )
 
     enum class Visibility {
+        UNKNOWN,
+
         /**
          * Visible to everyone, shown in public timelines.
          * */

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Reply
-import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +32,9 @@ import br.dev.thiagojedi.pterodactyl.data.model.mock.RebloggedStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.ReplyStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.SimpleStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.StatusWithLinkAndHashtags
+import br.dev.thiagojedi.pterodactyl.ui.actions.BookmarkAction
+import br.dev.thiagojedi.pterodactyl.ui.actions.FavouriteAction
+import br.dev.thiagojedi.pterodactyl.ui.actions.ReblogAction
 import br.dev.thiagojedi.pterodactyl.ui.actions.ShareAction
 import br.dev.thiagojedi.pterodactyl.ui.designSystem.Avatar
 import br.dev.thiagojedi.pterodactyl.ui.theme.PterodactylTheme
@@ -129,17 +131,6 @@ fun FilteredTag(status: Status, onClick: () -> Unit) {
 
 @Composable
 fun StatusActions(status: Status) {
-    val (favorited, setFavorited) = remember {
-        mutableStateOf(status.favourited)
-    }
-    val (bookmarked, setBookmarked) = remember {
-        mutableStateOf(status.bookmarked)
-    }
-    val (boosted, setBoosted) = remember {
-        mutableStateOf(status.reblogged)
-    }
-    val tint = MaterialTheme.colorScheme.onSurface
-    val selectedTint = MaterialTheme.colorScheme.primary
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -151,31 +142,10 @@ fun StatusActions(status: Status) {
                 contentDescription = "Reply",
             )
         }
-        IconToggleButton(checked = boosted, onCheckedChange = setBoosted) {
-            Icon(
-                if (boosted) Icons.Rounded.RepeatOn else Icons.Rounded.Repeat,
-                contentDescription = "Boost",
-                tint = if (boosted) selectedTint else tint
-            )
-        }
-        IconToggleButton(checked = favorited, onCheckedChange = setFavorited) {
-            Icon(
-                if (favorited) Icons.Rounded.Star else Icons.Rounded.StarBorder,
-                contentDescription = "Favorite",
-                tint = if (favorited) selectedTint else tint
-            )
-        }
-        IconToggleButton(checked = bookmarked, onCheckedChange = setBookmarked) {
-            Icon(
-                if (bookmarked) Icons.Rounded.Bookmark else Icons.Rounded.BookmarkBorder,
-                contentDescription = "Boost",
-                tint = if (bookmarked) selectedTint else tint
-            )
-        }
-        ShareAction(content = status.url, tint = tint)
-        IconButton(onClick = { }, enabled = false) {
-            Icon(Icons.Rounded.MoreHoriz, contentDescription = "More actions")
-        }
+        ReblogAction(status = status)
+        FavouriteAction(status = status)
+        BookmarkAction(status = status)
+        ShareAction(content = status.url, tint = MaterialTheme.colorScheme.onSurface)
     }
 }
 
