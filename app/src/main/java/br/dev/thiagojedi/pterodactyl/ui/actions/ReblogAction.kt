@@ -30,12 +30,14 @@ fun ReblogAction(status: Status, viewModel: StatusViewModel = viewModel()) {
     val scope = rememberCoroutineScope()
     val onCheckedChange: (Boolean) -> Unit = { checked ->
         scope.launch {
-            if (checked) {
+            val response = if (checked) {
                 viewModel.reblogStatus(status.id)
             } else {
                 viewModel.unreblogStatus(status.id)
             }
-            setBoosted(checked)
+            if (response.isSuccessful) {
+                setBoosted(checked)
+            }
         }
     }
 

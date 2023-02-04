@@ -26,12 +26,14 @@ fun FavouriteAction(status: Status, viewModel: StatusViewModel = viewModel()) {
     val scope = rememberCoroutineScope()
     val onCheckedChange: (Boolean) -> Unit = { checked ->
         scope.launch {
-            if (checked) {
+            val response = if (checked) {
                 viewModel.favouriteStatus(status.id)
             } else {
                 viewModel.unfavouriteStatus(status.id)
             }
-            setFavorited(checked)
+            if (response.isSuccessful) {
+                setFavorited(checked)
+            }
         }
     }
 

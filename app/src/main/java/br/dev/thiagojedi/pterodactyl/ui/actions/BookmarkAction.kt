@@ -26,12 +26,14 @@ fun BookmarkAction(status: Status, viewModel: StatusViewModel = viewModel()) {
     val scope = rememberCoroutineScope()
     val onCheckedChange: (Boolean) -> Unit = { checked ->
         scope.launch {
-            if (checked) {
+            val response = if (checked) {
                 viewModel.bookmarkStatus(status.id)
             } else {
                 viewModel.unbookmarkStatus(status.id)
             }
-            setBookmarked(checked)
+            if (response.isSuccessful) {
+                setBookmarked(checked)
+            }
         }
     }
 
