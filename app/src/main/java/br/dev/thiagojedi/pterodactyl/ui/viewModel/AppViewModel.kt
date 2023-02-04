@@ -1,16 +1,11 @@
 package br.dev.thiagojedi.pterodactyl.ui.viewModel
 
-import android.content.Context
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.dev.thiagojedi.pterodactyl.data.model.Application
-import br.dev.thiagojedi.pterodactyl.data.services.AccountService
-import br.dev.thiagojedi.pterodactyl.data.services.RetrofitHelper
 import br.dev.thiagojedi.pterodactyl.data.store.AppStore
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class AppViewModel(context: Context) : ViewModel() {
+class AppViewModel(context: android.app.Application) : PteroViewModel(context) {
     lateinit var clientId: String
     lateinit var clientSecret: String
     private val store: AppStore = AppStore(context)
@@ -21,7 +16,8 @@ class AppViewModel(context: Context) : ViewModel() {
     }
 
     private lateinit var _baseUrl: String
-    suspend fun setBaseUrl(url: String) {
+
+    fun setBaseUrl(url: String) {
         _baseUrl = url
     }
 
@@ -33,15 +29,6 @@ class AppViewModel(context: Context) : ViewModel() {
     }
 
     suspend fun validateUser() {
-        val baseUrl = store.getBaseUrl.first()
-        val userToken = store.getUserToken.first()
-
-        if (baseUrl == null || userToken == null) {
-            return
-        }
-        val api =
-            RetrofitHelper.getInstance(baseUrl, userToken)
-                .create(AccountService::class.java)
         viewModelScope.launch {
             try {
                 api.verifyCredentials().body()?.let {
@@ -53,6 +40,5 @@ class AppViewModel(context: Context) : ViewModel() {
         }
     }
 
-    val baseUrl = store.getBaseUrl
     val currentUserId = store.getCurrentAccountId
 }

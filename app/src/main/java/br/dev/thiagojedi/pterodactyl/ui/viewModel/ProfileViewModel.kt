@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import br.dev.thiagojedi.pterodactyl.data.model.Account
-import br.dev.thiagojedi.pterodactyl.data.services.AccountService
+import br.dev.thiagojedi.pterodactyl.data.services.MastodonApiService
 import br.dev.thiagojedi.pterodactyl.data.services.RetrofitHelper
 import br.dev.thiagojedi.pterodactyl.data.store.AppStore
 import kotlinx.coroutines.flow.first
@@ -25,7 +25,7 @@ class ProfileViewModel(context: Application) : AndroidViewModel(context) {
         }
         val api =
             RetrofitHelper.getInstance(baseUrl, userToken)
-                .create(AccountService::class.java)
+                .create(MastodonApiService::class.java)
 
         viewModelScope.launch {
             try {

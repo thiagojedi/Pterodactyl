@@ -9,7 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.rememberCoroutineScope
 import br.dev.thiagojedi.pterodactyl.data.model.Application
-import br.dev.thiagojedi.pterodactyl.data.services.AppService
+import br.dev.thiagojedi.pterodactyl.data.services.MastodonApiService
 import br.dev.thiagojedi.pterodactyl.data.services.RetrofitHelper
 import br.dev.thiagojedi.pterodactyl.ui.LoginView
 import br.dev.thiagojedi.pterodactyl.ui.viewModel.AppViewModel
@@ -24,7 +24,7 @@ class OnboardActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = AppViewModel(this)
+        viewModel = AppViewModel(this.application)
 
         service = AuthorizationService(this)
 
@@ -51,7 +51,7 @@ class OnboardActivity : ComponentActivity() {
     suspend fun registerApp(instanceAddress: String) {
         val url = "https://$instanceAddress"
         coroutineScope {
-            val api = RetrofitHelper.getInstance(url).create(AppService::class.java)
+            val api = RetrofitHelper.getInstance(url).create(MastodonApiService::class.java)
             val result = api.createAppToken(
                 clientName = "Pterodactyl",
                 redirectUris = redirectUri,

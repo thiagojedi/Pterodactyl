@@ -7,13 +7,31 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import br.dev.thiagojedi.pterodactyl.data.model.Filter
 import br.dev.thiagojedi.pterodactyl.data.model.Status
+import br.dev.thiagojedi.pterodactyl.data.services.MastodonApiService
 import br.dev.thiagojedi.pterodactyl.data.services.RetrofitHelper
-import br.dev.thiagojedi.pterodactyl.data.services.TimeLineService
 import br.dev.thiagojedi.pterodactyl.data.store.AppStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class TimeLineViewModel(context: Application) : AndroidViewModel(context) {
+abstract class PteroViewModel(context: Application) : AndroidViewModel(context) {
+    protected lateinit var api: MastodonApiService
+    private val store: AppStore = AppStore(context)
+
+    init {
+        viewModelScope.launch {
+            val baseUrl = store.getBaseUrl.first()
+            val userToken = store.getUserToken.first()
+
+            if (baseUrl != null && userToken != null) {
+                api =
+                    RetrofitHelper.getInstance(baseUrl, userToken)
+                        .create(MastodonApiService::class.java)
+            }
+        }
+    }
+}
+
+class TimeLineViewModel(context: Application) : PteroViewModel(context) {
     private val store: AppStore = AppStore(context)
     val homeTimeLine = mutableStateListOf<Status>()
     val localTimeLine = mutableStateListOf<Status>()
@@ -24,16 +42,6 @@ class TimeLineViewModel(context: Application) : AndroidViewModel(context) {
     suspend fun getLocalTimeline() = getTimeline("local", localTimeLine)
 
     private suspend fun getTimeline(type: String, list: MutableList<Status>) {
-        val baseUrl = store.getBaseUrl.first()
-        val userToken = store.getUserToken.first()
-
-        if (baseUrl == null || userToken == null) {
-            return
-        }
-        val api =
-            RetrofitHelper.getInstance(baseUrl, userToken)
-                .create(TimeLineService::class.java)
-
         viewModelScope.launch {
             try {
                 val result = when (type) {
