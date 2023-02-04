@@ -52,8 +52,7 @@ class AppViewModel(context: android.app.Application) : PteroViewModel(context) {
                 if (!response.isSuccessful && response.code() == 401) {
                     store.clearBaseUrl()
                 } else {
-                    val id = response.body()?.id
-                    id?.let { store.saveAccountId(it) }
+                    response.body()?.let { store.saveAccountId(it.id) }
                 }
             } catch (ex: Exception) {
                 Log.e(AppViewModel::class.simpleName, "validateUser: $ex")
