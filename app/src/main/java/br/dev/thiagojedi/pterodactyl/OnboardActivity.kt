@@ -48,9 +48,10 @@ class OnboardActivity : ComponentActivity() {
     private val redirectUri = "pterodactyl://callback"
     private val scopes = "read write follow push"
 
-    suspend fun registerApp(url: String) {
+    suspend fun registerApp(instanceAddress: String) {
+        val url = "https://$instanceAddress"
         coroutineScope {
-            val api = RetrofitHelper.getInstance("https://$url").create(AppService::class.java)
+            val api = RetrofitHelper.getInstance(url).create(AppService::class.java)
             val result = api.createAppToken(
                 clientName = "Pterodactyl",
                 redirectUris = redirectUri,
