@@ -17,7 +17,7 @@ private val invisibleSpanPattern by lazy {
     Regex("<span class=\"invisible\">[^<]*?</span>")
 }
 private val paragraphPattern by lazy {
-    Pattern.compile("<p>(.+?)</p>", Pattern.DOTALL or Pattern.CASE_INSENSITIVE)
+    Regex("<p>(.+?)</p>", RegexOption.DOT_MATCHES_ALL)
 }
 private val aTagPattern by lazy {
     Regex("<a href=\"([^\"]+)\"[^>]*>(<span class=\"(ellipsis)?\">)?([^<]+?)(</span>)?</a>")
@@ -32,30 +32,29 @@ const val HashtagTag = "TAG"
 fun parseMastodonHtml(
     text: String,
     mentions: List<Status.Mention> = emptyList(),
-    paragraphStyle: ParagraphStyle = ParagraphStyle(),
     linkStyle: SpanStyle = SpanStyle(),
+    paragraphStyle: ParagraphStyle = ParagraphStyle(),
 ): AnnotatedString {
     val cleanText = text
         .replace(invisibleSpanPattern, "")
         .replace(mentionPattern) { match -> "@${match.groups[1]?.value}" }
         .replace(hashtagPattern) { match -> "#${match.groups[1]?.value}" }
-    val paragraphMatch = paragraphPattern.matcher(cleanText)
+    val paragraphMatch = paragraphPattern.findAll(cleanText)
+    val count = paragraphMatch.count() - 1
     val paragraphs = buildAnnotatedString {
-        while (paragraphMatch.find()) {
-            val substring = paragraphMatch.group(1).orEmpty()
+        paragraphMatch.forEachIndexed { index, matchResult ->
+            val substring = matchResult.groups[1]?.value.orEmpty()
+            val paragraphWithLinks = buildAnnotatedString {
+                val links = aTagPattern.findAll(substring)
+                var position = 0
 
-            withStyle(paragraphStyle) {
-                appendLine(buildAnnotatedString {
-                    val links = aTagPattern.findAll(substring)
-                    var position = 0
-
-                    for (link in links) {
-                        val linkUrl = link.groups[1]?.value.orEmpty()
-                        val linkText = link.groups[4]?.value
-                        val isFullText = link.groups[3]?.value.isNullOrEmpty()
-                        val stringBefore =
-                            substring.slice(position until link.range.first).parseAsHtml()
-                        append(stringBefore)
+                for (link in links) {
+                    val linkUrl = link.groups[1]?.value.orEmpty()
+                    val linkText = link.groups[4]?.value
+                    val isFullText = link.groups[3]?.value.isNullOrEmpty()
+                    val stringBefore =
+                        substring.slice(position until link.range.first).parseAsHtml()
+                    append(stringBefore)
 
                         pushStringAnnotation(URLTag, linkUrl)
                         withStyle(linkStyle) {
@@ -66,16 +65,20 @@ fun parseMastodonHtml(
                         }
                         pop()
 
-                        position = link.range.last + 1
-                    }
-                    val stringAfter =
-                        if (links.none()) substring
-                        else substring.slice(position..substring.lastIndex)
-                    // This is needed because "parseAsHtml" trims leading spaces
-                    val leadingSpaces = leadingSpacesPattern.find(stringAfter)?.value.orEmpty()
+                    position = link.range.last + 1
+                }
+                val stringAfter =
+                    if (links.none()) substring
+                    else substring.slice(position..substring.lastIndex)
+                // This is needed because "parseAsHtml" trims leading spaces
+                val leadingSpaces = leadingSpacesPattern.find(stringAfter)?.value.orEmpty()
 
-                    append(leadingSpaces + stringAfter.parseAsHtml())
-                })
+                append(leadingSpaces + stringAfter.parseAsHtml())
+            }
+
+            withStyle(paragraphStyle) {
+                if (index == count) append(paragraphWithLinks)
+                else appendLine(paragraphWithLinks)
             }
         }
     }

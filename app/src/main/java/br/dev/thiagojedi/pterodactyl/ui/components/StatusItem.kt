@@ -159,8 +159,8 @@ fun StatusContent(status: Status, onMentionClick: (String) -> Unit = {}) {
     val mastodonHtml = parseMastodonHtml(
         status.content,
         status.mentions,
-        paragraphStyle = paragraphStyle,
-        linkStyle = linkStyle
+        linkStyle = linkStyle,
+        paragraphStyle = paragraphStyle
     )
     val context = LocalContext.current
 
