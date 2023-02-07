@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import br.dev.thiagojedi.pterodactyl.data.model.Application
 import br.dev.thiagojedi.pterodactyl.data.store.AppStore
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class AppViewModel(context: android.app.Application) : PteroViewModel(context) {
     lateinit var clientId: String
@@ -23,9 +25,23 @@ class AppViewModel(context: android.app.Application) : PteroViewModel(context) {
     }
 
     fun setUserToken(token: String) {
-        viewModelScope.launch {
+        runBlocking {
             store.saveBaseUrl(_baseUrl)
+            store.saveClientInfo(clientId, clientSecret)
             store.saveUserToken(token)
+        }
+    }
+
+    fun logoutUser() {
+        runBlocking {
+            val clientId = store.getClientId.first()!!
+            val clientSecret = store.getClientSecret.first()!!
+            val token = store.getUserToken.first()!!
+            val result = api.revokeToken(clientId, clientSecret, token)
+
+            if (result.isSuccessful) {
+                store.clearBaseUrl()
+            }
         }
     }
 
@@ -35,6 +51,9 @@ class AppViewModel(context: android.app.Application) : PteroViewModel(context) {
                 val response = api.verifyCredentials()
                 if (!response.isSuccessful && response.code() == 401) {
                     store.clearBaseUrl()
+                } else {
+                    val id = response.body()?.id
+                    id?.let { store.saveAccountId(it) }
                 }
             } catch (ex: Exception) {
                 Log.e(AppViewModel::class.simpleName, "validateUser: $ex")

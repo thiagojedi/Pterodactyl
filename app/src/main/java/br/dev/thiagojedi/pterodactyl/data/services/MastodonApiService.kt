@@ -67,7 +67,7 @@ interface MastodonApiService {
     @GET("/api/v1/timelines/home")
     suspend fun getHomeTimeline(): Response<List<Status>>
 
-    // #endregion
+    //#endregion
     //#region Application
     @FormUrlEncoded
     @POST("/api/v1/apps")
@@ -88,5 +88,14 @@ interface MastodonApiService {
 
     @GET("/api/v1/accounts/verify_credentials")
     suspend fun verifyCredentials(): Response<Account>
+    //#endregion
+    //#region OAuth
+    @FormUrlEncoded
+    @POST("/oauth/revoke")
+    suspend fun revokeToken(
+        @Field("client_id") clientId: String,
+        @Field("client_secret") clientSecret: String,
+        @Field("token") token: String
+    ): Response<Unit>
     //#endregion
 }
