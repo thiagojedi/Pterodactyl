@@ -24,6 +24,7 @@ class MainActivity : ComponentActivity() {
             if (savedUrl.value == null) {
                 val intent = Intent(this, OnboardActivity::class.java)
                 startActivity(intent)
+                finish()
             }
 
             PterodactylTheme {
