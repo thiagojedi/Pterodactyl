@@ -6,7 +6,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -99,7 +98,7 @@ fun ProfileDetails(
                     variant = AvatarSize.Large,
                     modifier = Modifier
                         .padding(8.dp)
-                        .shadow(8.dp, RoundedCornerShape(12.dp), true),
+                        .shadow(8.dp, MaterialTheme.shapes.medium, true),
                 )
             }
             item { ProfileTitle(account = account) }

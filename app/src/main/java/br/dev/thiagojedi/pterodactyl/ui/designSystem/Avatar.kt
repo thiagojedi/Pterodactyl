@@ -1,7 +1,7 @@
 package br.dev.thiagojedi.pterodactyl.ui.designSystem
 
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,7 +19,7 @@ fun Avatar(
     modifier: Modifier = Modifier,
     animated: Boolean = true,
     variant: AvatarSize = AvatarSize.Medium,
-    shape: Shape = RoundedCornerShape(12.dp),
+    shape: Shape = MaterialTheme.shapes.medium,
     borderWidth: Dp = 0.dp
 ) {
     AsyncImage(
