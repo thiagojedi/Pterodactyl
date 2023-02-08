@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import br.dev.thiagojedi.pterodactyl.navigation.navigateToProfile
 import br.dev.thiagojedi.pterodactyl.ui.components.PteroNavBar
 import br.dev.thiagojedi.pterodactyl.ui.components.Screen
+import br.dev.thiagojedi.pterodactyl.ui.theme.PterodactylTheme
 import br.dev.thiagojedi.pterodactyl.ui.viewModel.AppViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,43 +26,46 @@ fun PteroApp(appViewModel: AppViewModel = viewModel()) {
         appViewModel.validateUser()
     }
 
-    NavHost(navController, "home_tabs") {
-        navigation(Screen.Home.route, "home_tabs") {
-            composable(Screen.Home.route) {
-                Scaffold(bottomBar = { PteroNavBar(navController = navController) }) {
-                    Surface(Modifier.padding(it)) {
-                        HomeTimeLineView(
-                            onNavigateToUser = { id -> navController.navigateToProfile(id) }
-                        )
+    PterodactylTheme(dynamicColor = false) {
+        NavHost(navController, "home_tabs") {
+            navigation(Screen.Home.route, "home_tabs") {
+                composable(Screen.Home.route) {
+                    Scaffold(bottomBar = { PteroNavBar(navController = navController) }) {
+                        Surface(Modifier.padding(it)) {
+                            HomeTimeLineView(
+                                onNavigateToUser = { id -> navController.navigateToProfile(id) }
+                            )
+                        }
                     }
                 }
-            }
-            composable(Screen.Profile.route) {
-                Scaffold(bottomBar = { PteroNavBar(navController = navController) }) {
-                    Surface(Modifier.padding(it)) {
-                        val userId = appViewModel.currentUserId.collectAsState(initial = null).value
-                        if (userId != null) {
-                            ProfileView(
-                                userId,
-                                currentUser = true,
-                                onNavigateToUser = { navController.navigateToProfile(it) })
+                composable(Screen.Profile.route) {
+                    Scaffold(bottomBar = { PteroNavBar(navController = navController) }) {
+                        Surface(Modifier.padding(it)) {
+                            val userId =
+                                appViewModel.currentUserId.collectAsState(initial = null).value
+                            if (userId != null) {
+                                ProfileView(
+                                    userId,
+                                    currentUser = true,
+                                    onNavigateToUser = { navController.navigateToProfile(it) })
+                            }
                         }
                     }
                 }
             }
-        }
-        composable(
-            "profile/{userId}"
-        ) { entry ->
-            val currentUserId = appViewModel.currentUserId.collectAsState(initial = null).value
-            val userId = entry.arguments?.getString("userId")!!
-            ProfileView(
-                userId,
-                canGoBack = navController.previousBackStackEntry !== null,
-                onGoBack = { navController.popBackStack() },
-                onNavigateToUser = { navController.navigateToProfile(it) },
-                currentUser = userId == currentUserId
-            )
+            composable(
+                "profile/{userId}"
+            ) { entry ->
+                val currentUserId = appViewModel.currentUserId.collectAsState(initial = null).value
+                val userId = entry.arguments?.getString("userId")!!
+                ProfileView(
+                    userId,
+                    canGoBack = navController.previousBackStackEntry !== null,
+                    onGoBack = { navController.popBackStack() },
+                    onNavigateToUser = { navController.navigateToProfile(it) },
+                    currentUser = userId == currentUserId
+                )
+            }
         }
     }
 }
