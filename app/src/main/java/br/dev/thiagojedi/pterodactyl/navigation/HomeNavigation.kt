@@ -16,29 +16,23 @@ import br.dev.thiagojedi.pterodactyl.ui.components.Screen
 import br.dev.thiagojedi.pterodactyl.ui.components.TootFab
 
 @ExperimentalMaterial3Api
-fun NavGraphBuilder.homeRoutes(route: String, navController: NavController, userId: String?) {
+fun NavGraphBuilder.homeRoutes(route: String, navController: NavController) {
     navigation(Screen.Home.route, route) {
         composable(Screen.Home.route) {
-            Scaffold(
-                bottomBar = { PteroNavBar(navController = navController) },
+            Scaffold(bottomBar = { PteroNavBar(navController = navController) },
                 floatingActionButton = { TootFab(onClick = { navController.navigateToCompose() }) }) {
                 Surface(Modifier.padding(it)) {
-                    HomeTimeLineView(
-                        onNavigateToUser = { id -> navController.navigateToProfile(id) },
-                        onReply = { id, mentions -> navController.navigateToReply(id, mentions) }
-                    )
+                    HomeTimeLineView(onNavigateToUser = { id -> navController.navigateToProfile(id) },
+                        onReply = { id, mentions -> navController.navigateToReply(id, mentions) })
                 }
             }
         }
         composable(Screen.Profile.route) {
             Scaffold(bottomBar = { PteroNavBar(navController = navController) }) {
                 Surface(Modifier.padding(it)) {
-                    if (userId != null) {
-                        ProfileView(
-                            userId = userId,
-                            currentUser = true,
-                            onNavigateToUser = { navController.navigateToProfile(it) })
-                    }
+                    ProfileView(
+                        currentUser = true,
+                        onNavigateToUser = { id -> navController.navigateToProfile(id) })
                 }
             }
         }

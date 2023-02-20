@@ -11,21 +11,26 @@ import kotlinx.coroutines.launch
 @Composable
 fun ComposeView(
     replyId: String? = null,
-    mentions: List<String> = emptyList(),
+    mentions: List<String>? = null,
     statusViewModel: StatusViewModel = viewModel(),
     onPostSuccess: () -> Unit = {},
     onClose: () -> Unit = {}
 ) {
-    val startText = mentions.map { "@$it" }.joinToString(" ")
-    ComposeForm(startText = startText,
-        onClose = onClose, onPost = { text, cw ->
+    val startText = mentions?.map { "@$it" }?.joinToString(" ")
+    ComposeForm(
+        startText = startText.orEmpty(),
+        onClose = onClose,
+        onPost = { text, cw ->
             statusViewModel.viewModelScope.launch {
                 try {
                     val createStatus = statusViewModel.createStatus(text, cw, inReplyTo = replyId)
                     if (createStatus.isSuccessful) {
                         onPostSuccess()
                     } else {
-                        Log.e("ERROR", "ComposeView: ${createStatus.message()}")
+                        createStatus.errorBody()?.let {
+                            val message = it.string()
+                            Log.e("ERROR", "ComposeView: $message")
+                        }
                     }
                 } catch (error: Exception) {
                     Log.e("ERROR", "ComposeView: ${error.message}")

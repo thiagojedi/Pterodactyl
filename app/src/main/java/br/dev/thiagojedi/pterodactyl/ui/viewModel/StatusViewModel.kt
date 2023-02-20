@@ -19,6 +19,6 @@ class StatusViewModel(context: Application) : PteroViewModel(context) {
         api.postNewStatus(
             status,
             spoilerText = contentWarning,
-            inReplyTo = inReplyTo
+            inReplyTo = inReplyTo.orEmpty()
         )
 }

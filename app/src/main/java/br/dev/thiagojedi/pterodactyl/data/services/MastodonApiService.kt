@@ -47,10 +47,10 @@ interface MastodonApiService {
     suspend fun postNewStatus(
         @Field("status") status: String,
         @Field("media_ids") mediaIds: List<String> = emptyList(),
-        @Field("in_reply_to_id") inReplyTo: String? = null,
+        @Field("in_reply_to_id") inReplyTo: String = "",
         @Field("sensitive") sensitive: Boolean = false,
-        @Field("spoiler_text") spoilerText: String? = null,
-        @Field("visibility") visibility: Status.Visibility = Status.Visibility.PRIVATE,
+        @Field("spoiler_text") spoilerText: String? = "",
+//        @Field("visibility") visibility: Status.Visibility = Status.Visibility.PRIVATE,
     ): Response<Status>
 
     //#endregion

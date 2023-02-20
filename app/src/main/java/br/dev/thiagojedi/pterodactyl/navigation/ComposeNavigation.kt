@@ -27,7 +27,7 @@ fun NavGraphBuilder.composeRoutes(navController: NavController) {
         )
     ) { entry ->
         val replyId = entry.arguments?.getString("replyId")
-        val mentions = entry.arguments?.getString("mentions").orEmpty().split(", ")
+        val mentions = entry.arguments?.getString("mentions")?.split(", ")
 
         ComposeView(
             replyId,

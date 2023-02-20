@@ -13,17 +13,18 @@ import br.dev.thiagojedi.pterodactyl.ui.viewModel.AppViewModel
 @Composable
 fun PteroApp(appViewModel: AppViewModel = viewModel()) {
     val navController = rememberNavController()
-    val currentUserId = appViewModel.currentUserId.collectAsState(initial = null).value
 
     LaunchedEffect(Unit) {
         appViewModel.validateUser()
     }
+    val currentUserId = appViewModel.currentUserId.collectAsState(initial = null).value
+
 
     PterodactylTheme(dynamicColor = false) {
         NavHost(navController, "home_tabs") {
-            homeRoutes("home_tabs", navController, currentUserId)
+            homeRoutes("home_tabs", navController)
 
-            profileRoutes(navController, currentUserId)
+            profileRoutes(navController)
 
             composeRoutes(navController)
         }

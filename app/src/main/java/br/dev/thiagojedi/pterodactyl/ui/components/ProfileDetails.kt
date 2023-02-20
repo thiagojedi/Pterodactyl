@@ -80,7 +80,8 @@ fun ProfileDetails(
                 if (canGoBack) {
                     IconButton(onClick = onGoBack) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack, contentDescription = "Go back"
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Go back"
                         )
                     }
                 }
@@ -137,11 +138,8 @@ private fun ProfileStats(account: Account) {
         )
         Stats(
             stat = pluralStringResource(
-                id = R.plurals.stats_followers,
-                account.followersCount
-            ),
-            value = account.followersCount,
-            modifier = modifier
+                id = R.plurals.stats_followers, account.followersCount
+            ), value = account.followersCount, modifier = modifier
         )
     }
 }
@@ -149,8 +147,7 @@ private fun ProfileStats(account: Account) {
 @Composable
 private fun Stats(stat: String, value: Int, modifier: Modifier = Modifier) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier
     ) {
         Text(text = value.toString(), style = MaterialTheme.typography.labelLarge)
         Text(text = stat, style = MaterialTheme.typography.labelSmall)
@@ -163,9 +160,7 @@ private fun ProfileTitle(account: Account) {
 
     val (annotated, inlineContent) = emojify(account.display_name, account.emojis, style.fontSize)
     Text(
-        text = annotated,
-        inlineContent = inlineContent,
-        style = style
+        text = annotated, inlineContent = inlineContent, style = style
     )
 }
 

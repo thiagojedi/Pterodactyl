@@ -22,14 +22,11 @@ import br.dev.thiagojedi.pterodactyl.ui.theme.PterodactylTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComposeForm(
-    startText: String = "",
-    onPost: (text: String, cw: String) -> Unit,
-    onClose: () -> Unit
+    startText: String = "", onPost: (text: String, cw: String) -> Unit, onClose: () -> Unit
 ) {
     val (text, setText) = remember { mutableStateOf(startText) }
     val (contentWarning, setContentWarning) = remember { mutableStateOf("") }
     val (withContentWarning, setWithContentWarning) = remember { mutableStateOf(false) }
-
 
     Scaffold(topBar = {
         ComposeTopBar(onPost = { onPost(text, contentWarning) }, onClose = onClose)
@@ -51,8 +48,7 @@ fun ComposeForm(
                             "${text.length}/500",
                             textAlign = TextAlign.End,
                         )
-                    }, modifier = Modifier.fillMaxWidth(),
-                    minLines = 3
+                    }, modifier = Modifier.fillMaxWidth(), minLines = 3
                 )
                 ComposeBottomBar(onContentWarning = setWithContentWarning)
             }
@@ -66,7 +62,7 @@ fun ContentWarningField(onContentWarningChange: (String) -> Unit = {}) {
     val (cw, setCw) = remember {
         mutableStateOf("")
     }
-    TextField(value = cw, onValueChange = {
+    TextField(modifier = Modifier.fillMaxWidth(), value = cw, onValueChange = {
         setCw(it)
         onContentWarningChange(it)
     }, label = {
