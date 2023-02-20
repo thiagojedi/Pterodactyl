@@ -9,12 +9,16 @@ fun NavController.navigateToProfile(id: String) {
     this.navigate("profile/$id")
 }
 
-fun NavGraphBuilder.profileRoutes(navController: NavController) {
+fun NavGraphBuilder.profileRoutes(navController: NavController, currentUserId: String?) {
     composable("profile/{userId}") { entry ->
+        val userId = entry.arguments?.getString("userId")!!
+
         ProfileView(
-            entry.arguments?.getString("userId")!!,
+            userId,
             canGoBack = navController.previousBackStackEntry !== null,
-            onGoBack = { navController.popBackStack() }
+            onGoBack = { navController.popBackStack() },
+            onNavigateToUser = { navController.navigateToProfile(it) },
+            currentUser = userId == currentUserId
         )
     }
 }

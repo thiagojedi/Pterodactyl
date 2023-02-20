@@ -6,24 +6,20 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun TootFab(text: String = "Toot") {
-    val (value, setValue) = remember { mutableStateOf(text) }
-
+fun TootFab(text: String = "Toot", onClick: () -> Unit = {}) {
     ExtendedFloatingActionButton(
-        onClick = { setValue("Aqui") },
+        onClick = onClick,
         icon = { Icon(Icons.Outlined.Create, "Localized description") },
-        text = { Text(text = value) },
+        text = { Text(text) },
     )
 }
 
 @Preview
 @Composable
-fun TootFabPreview() {
+private fun TootFabPreview() {
     val mock = "Postar"
 
     TootFab(mock)
@@ -31,7 +27,7 @@ fun TootFabPreview() {
 
 @Preview
 @Composable
-fun TootFabPreviewDois() {
+private fun TootFabPreviewDois() {
     val mock = "Escrever"
 
     TootFab(mock)

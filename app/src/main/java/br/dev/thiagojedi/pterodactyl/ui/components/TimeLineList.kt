@@ -13,6 +13,7 @@ import br.dev.thiagojedi.pterodactyl.data.model.Status
 fun TimeLineList(
     data: List<Status>,
     onNavigateToUser: (id: String) -> Unit,
+    onReply: (id: String, mentions: List<String>) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val lazyListState = rememberLazyListState()
@@ -22,7 +23,7 @@ fun TimeLineList(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(data, key = { it.id }) {
-            StatusItem(status = it, onUserClick = onNavigateToUser)
+            StatusItem(status = it, onUserClick = onNavigateToUser, onReplyClick = onReply)
         }
     }
 }

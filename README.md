@@ -29,9 +29,9 @@ their codebase, I'm creating my own.
 - [ ] Timelines
   - [ ] Federated
   - [ ] Local
-  - [-] Home
+  - [x] Home
 - [ ] Statuses
-  - [ ] Interaction (fav, boost)
+  - [x] Interaction (fav, boost)
   - [ ] Context (replies, etc)
   - [ ] Media
 - [x] Login
@@ -40,6 +40,8 @@ their codebase, I'm creating my own.
   - [ ] User Statuses
   - [ ] User actions (follow, silence, etc)
 - [ ] Compose statuses
+  - [x] Text
+  - [x] Content Warning
   - [ ] Edit
   - [ ] Custom Emoji selector
   - [ ] Mention selector

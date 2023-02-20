@@ -50,8 +50,8 @@ interface MastodonApiService {
         @Field("in_reply_to_id") inReplyTo: String? = null,
         @Field("sensitive") sensitive: Boolean = false,
         @Field("spoiler_text") spoilerText: String? = null,
-        @Field("visibility") visibility: Status.Visibility,
-    ): Status
+        @Field("visibility") visibility: Status.Visibility = Status.Visibility.PRIVATE,
+    ): Response<Status>
 
     //#endregion
     //#region Timeline

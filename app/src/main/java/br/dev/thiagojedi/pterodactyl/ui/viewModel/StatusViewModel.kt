@@ -2,8 +2,6 @@ package br.dev.thiagojedi.pterodactyl.ui.viewModel
 
 import android.app.Application
 
-private val TAG = StatusViewModel::class.simpleName
-
 class StatusViewModel(context: Application) : PteroViewModel(context) {
     suspend fun reblogStatus(id: String) = api.reblogStatus(id)
 
@@ -16,4 +14,11 @@ class StatusViewModel(context: Application) : PteroViewModel(context) {
     suspend fun bookmarkStatus(id: String) = api.bookmarkStatus(id)
 
     suspend fun unbookmarkStatus(id: String) = api.unbookmarkStatus(id)
+
+    suspend fun createStatus(status: String, contentWarning: String?, inReplyTo: String?) =
+        api.postNewStatus(
+            status,
+            spoilerText = contentWarning,
+            inReplyTo = inReplyTo
+        )
 }

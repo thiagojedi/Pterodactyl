@@ -16,7 +16,8 @@ import br.dev.thiagojedi.pterodactyl.ui.viewModel.TimeLineViewModel
 @Composable
 fun HomeTimeLineView(
     timeLineViewModel: TimeLineViewModel = viewModel(),
-    onNavigateToUser: (id: String) -> Unit = {}
+    onNavigateToUser: (id: String) -> Unit = {},
+    onReply: (id: String, mentions: List<String>) -> Unit = { id, mentions -> }
 ) {
     LaunchedEffect(Unit) {
         timeLineViewModel.getHomeTimeline()
@@ -25,7 +26,7 @@ fun HomeTimeLineView(
         topBar = { PteroTopBar() }
     ) {
         Surface(Modifier.padding(it)) {
-            TimeLineList(data = timeLineViewModel.homeTimeLine, onNavigateToUser)
+            TimeLineList(data = timeLineViewModel.homeTimeLine, onNavigateToUser, onReply)
         }
     }
 }

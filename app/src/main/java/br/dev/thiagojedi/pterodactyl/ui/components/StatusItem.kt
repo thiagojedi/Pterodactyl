@@ -10,9 +10,9 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Reply
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,16 +32,17 @@ import br.dev.thiagojedi.pterodactyl.data.model.mock.RebloggedStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.ReplyStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.SimpleStatus
 import br.dev.thiagojedi.pterodactyl.data.model.mock.StatusWithLinkAndHashtags
-import br.dev.thiagojedi.pterodactyl.ui.actions.BookmarkAction
-import br.dev.thiagojedi.pterodactyl.ui.actions.FavouriteAction
-import br.dev.thiagojedi.pterodactyl.ui.actions.ReblogAction
-import br.dev.thiagojedi.pterodactyl.ui.actions.ShareAction
+import br.dev.thiagojedi.pterodactyl.ui.actions.*
 import br.dev.thiagojedi.pterodactyl.ui.designSystem.Avatar
 import br.dev.thiagojedi.pterodactyl.ui.theme.PterodactylTheme
 import br.dev.thiagojedi.pterodactyl.utils.*
 
 @Composable
-fun StatusItem(status: Status, onUserClick: (id: String) -> Unit = {}) {
+fun StatusItem(
+    status: Status,
+    onUserClick: (id: String) -> Unit = {},
+    onReplyClick: (id: String, mentions: List<String>) -> Unit = { id, mentions -> }
+) {
     val actualStatus = status.reblog ?: status
     val density = LocalDensity.current
 
@@ -95,7 +96,14 @@ fun StatusItem(status: Status, onUserClick: (id: String) -> Unit = {}) {
                     }
                     StatusContent(status = actualStatus, onMentionClick = onUserClick)
                     // TODO: StatusMedia(status = actualStatus)
-                    StatusActions(status = actualStatus)
+                    StatusActions(
+                        status = actualStatus,
+                        onReplyClick = {
+                            onReplyClick(
+                                actualStatus.id,
+                                listOf(actualStatus.account.acct).plus(actualStatus.mentions.map { it.acct })
+                            )
+                        })
                 }
             }
         }
@@ -130,18 +138,13 @@ fun FilteredTag(status: Status, onClick: () -> Unit) {
 }
 
 @Composable
-fun StatusActions(status: Status) {
+fun StatusActions(status: Status, onReplyClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxWidth()
     ) {
-        IconButton(onClick = { }, enabled = false) {
-            Icon(
-                Icons.Filled.Reply,
-                contentDescription = "Reply",
-            )
-        }
+        ReplyAction(onClick = onReplyClick)
         ReblogAction(status = status)
         FavouriteAction(status = status)
         BookmarkAction(status = status)
